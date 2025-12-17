@@ -853,6 +853,36 @@ function setupFormEvents() {
     createProfessionalCard();
   });
 }
+
+function createProfessionalCard() {
+  const name = document.getElementById('name1').value;
+  const code = document.getElementById('code1').value;
+  const company = document.getElementById('company1').value;
+  const dept = document.getElementById('dept1').value;
+  const file = document.getElementById('photo1').files[0];
+  const t = translations[currentLang];
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const photoData = e.target.result;
+    const key = 'EMP_' + Date.now();
+    const employee = {
+      key,
+      name,
+      code,
+      company,
+      dept,
+      photoData,
+      timestamp: new Date().toISOString(),
+      guardConfirmTime: null
+    };
+    employeeData.unshift(employee);
+    localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
+    showEmployeeCard(name, code, company, dept, photoData, key, t);
+  };
+  reader.readAsDataURL(file);
+}
+
 function showEmployeeCard(name, code, company, dept, photoData, key, t) {
   const container = document.getElementById('main-container');
   container.innerHTML = `
@@ -970,45 +1000,12 @@ function handleQrImageUpload(e) {
 }
 
 /* แสดงข้อมูลหลังสแกน และให้รปภ.กดยืนยัน */
-// 🔥 แทนที่ทั้ง 5 ฟังก์ชัน ด้วยโค้ดนี้ทั้งก้อน
-function createProfessionalCard() {
-  const name = document.getElementById('name1').value;
-  const code = document.getElementById('code1').value;
-  const company = document.getElementById('company1').value;
-  const dept = document.getElementById('dept1').value;
-  const file = document.getElementById('photo1').files[0];
-  const t = translations[currentLang];
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const photoData = e.target.result;
-    const key = 'EMP_' + Date.now();
-    const employee = {
-      key, name, code, company, dept, photoData,
-      timestamp: new Date().toISOString(),
-      guardConfirmTime: null,
-      scanLogs: []  // เก็บประวัติสแกนทุกวัน
-    };
-    employeeData.unshift(employee);
-    localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
-    showEmployeeCard(name, code, company, dept, photoData, key, t);
-  };
-  reader.readAsDataURL(file);
-}
-
 function showEmployeeByKey(key) {
   const emp = employeeData.find(e => e.key === key);
-  if (!emp) { alert('ไม่พบข้อมูลพนักงาน'); return; }
-  
-  // บันทึก log อัตโนมัติทุกสแกน
-  const scanLog = {
-    scanTime: new Date().toISOString(),
-    scanDate: new Date().toLocaleDateString('th-TH'),
-    scanTimeLocal: new Date().toLocaleString('th-TH')
-  };
-  if (!emp.scanLogs) emp.scanLogs = [];
-  emp.scanLogs.unshift(scanLog);
-  
+  if (!emp) {
+    alert('ไม่พบข้อมูลพนักงาน');
+    return;
+  }
   currentScannedKey = key;
   document.getElementById('scan-photo').src = emp.photoData;
   document.getElementById('scan-name').textContent = emp.name;
@@ -1017,30 +1014,12 @@ function showEmployeeByKey(key) {
   document.getElementById('scan-dept').textContent = emp.dept;
   document.getElementById('scan-time').textContent = new Date(emp.timestamp).toLocaleString('th-TH');
   document.getElementById('scan-guard-time').textContent = emp.guardConfirmTime
-    ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-';
+    ? new Date(emp.guardConfirmTime).toLocaleString('th-TH')
+    : '-';
   document.getElementById('scan-result').style.display = 'block';
-  
-  localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
 }
 
-document.getElementById('guardConfirmBtn').addEventListener('click', () => {
-  if (!currentScannedKey) { alert('ยังไม่มีข้อมูลจาก QR'); return; }
-  const index = employeeData.findIndex(e => e.key === currentScannedKey);
-  if (index === -1) { alert('ไม่พบข้อมูลพนักงาน'); return; }
-  
-  const now = new Date().toISOString();
-  const confirmLog = {
-    scanTime: now, scanDate: new Date().toLocaleDateString('th-TH'),
-    scanTimeLocal: new Date().toLocaleString('th-TH'), guardConfirmed: true
-  };
-  employeeData[index].scanLogs.unshift(confirmLog);
-  employeeData[index].guardConfirmTime = now;
-  
-  localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
-  document.getElementById('scan-guard-time').textContent = new Date(now).toLocaleString('th-TH');
-  alert('✅ บันทึกเวลายืนยัน + ประวัติการสแกน');
-  loadReport();
-});
+/* รายงาน + เวลารปภ. */
 function loadReport() {
   const tbody = document.querySelector('#reportTable tbody');
   tbody.innerHTML = '';
@@ -1054,35 +1033,23 @@ function loadReport() {
       <td>${emp.dept}</td>
       <td>${new Date(emp.timestamp).toLocaleString('th-TH')}</td>
       <td>${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}</td>
-      <td>
-        <details style="font-size:0.75rem;">
-          <summary>สแกน ${emp.scanLogs?.length || 0} ครั้ง</summary>
-          ${emp.scanLogs?.map(log => 
-            `<div>${log.scanTimeLocal} ${log.guardConfirmed ? '✅' : ''}</div>`
-          ).join('') || 'ยังไม่สแกน'}
-        </details>
-      </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
+/* Export CSV (เปิดด้วย Excel ได้) */
 function exportToExcel() {
-  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,สร้างบัตร,รปภ.ยืนยัน,สแกนทั้งหมด,รายละเอียดสแกน\n';  // 🔥 BOM แก้ภาษาไทย
+  let csv = 'ชื่อ,รหัส,บริษัท,แผนก,เวลาแจ้งออก,เวลารปภ.ยืนยัน\n';
   employeeData.forEach(emp => {
-    const totalScans = emp.scanLogs?.length || 0;
-    const scanDetails = emp.scanLogs?.map(log => 
-      `${log.scanTimeLocal}${log.guardConfirmed ? ' (ยืนยัน)' : ''}`
-    ).join('; ') || '';
-    csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : ''}","${totalScans}","${scanDetails}"\n`;
+    csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : ''}"\n`;
   });
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `TEG_322_ScanLog_${new Date().toISOString().split('T')[0]}.csv`;
+  link.download = `TEG_322_Report_${new Date().toISOString().split('T')[0]}.csv`;
   link.click();
 }
-
 </script>
 </body>
 </html>
