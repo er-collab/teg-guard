@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TEG รปภ. - ตรวจสอบบัตรพนักงาน</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
@@ -68,21 +65,13 @@ body {
   border-radius: 24px;
   padding: 28px 24px;
   width: 100%;
+  max-width: 95%;
   max-width: 450px;
   max-height: 95vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   position: relative;
   margin-top: 80px;
-}
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
 }
 
 h1 {
@@ -172,6 +161,7 @@ h1 {
   box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
   margin-bottom: 20px;
   position: relative;
+  background: #f8fafc;
 }
 #qr-reader video {
   width: 100%;
@@ -184,26 +174,26 @@ h1 {
   right: 10px;
   z-index: 10;
   opacity: 0;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   cursor: pointer;
 }
 #uploadBtn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   z-index: 11;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border: none;
   border-radius: 50%;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.95);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   transition: all 0.2s;
 }
@@ -263,8 +253,8 @@ h1 {
   padding: 20px 0;
 }
 .card-photo {
-  width: 80px;
-  height: 100px;
+  width: 90px;
+  height: 115px;
   border-radius: 12px;
   object-fit: cover;
   border: 3px solid rgba(255, 255, 255, 0.8);
@@ -320,25 +310,6 @@ h1 {
   margin-top: 16px;
 }
 
-.device-select {
-  margin-bottom: 20px;
-}
-.device-select label {
-  display: block;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 8px;
-}
-.device-select select {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  background: white;
-  font-family: inherit;
-  font-size: 1rem;
-}
-
 .status-message {
   padding: 16px;
   border-radius: 12px;
@@ -359,11 +330,14 @@ h1 {
   display: block;
 }
 
-/* รายงานย้อนหลัง */
+.report-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-top: 20px;
+}
 .report-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   overflow: hidden;
@@ -373,25 +347,27 @@ h1 {
 .report-table th {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
-  padding: 16px 12px;
+  padding: 14px 10px;
   font-weight: 600;
   font-size: 0.9rem;
   text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 .report-table td {
-  padding: 14px 12px;
+  padding: 12px 10px;
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   vertical-align: top;
 }
 .report-table tr:hover td {
   background: rgba(59, 130, 246, 0.05);
 }
 .report-table .status-ok { color: #10b981; font-weight: 600; }
-.report-table .status-cancel { color: #ef4444; font-weight: 600; }
 .report-photo {
-  width: 50px;
-  height: 65px;
+  width: 45px;
+  height: 58px;
   object-fit: cover;
   border-radius: 8px;
   border: 2px solid #e5e7eb;
@@ -425,16 +401,19 @@ h1 {
 }
 
 @media (max-width: 768px) {
-  .container { padding: 20px 16px; margin-top: 100px; max-width: 95%; }
+  .container { padding: 20px 16px; margin-top: 100px; max-width: 98%; }
   .action-buttons, .scan-controls { flex-direction: column; }
-  #qr-reader { height: 250px; }
+  #qr-reader { height: 280px; }
   .card-body { flex-direction: column; }
   .card-photo { width: 100px; height: 130px; align-self: center; margin-bottom: 16px; }
-}
-@media (max-width: 480px) {
   .report-table { font-size: 0.85rem; }
   .report-table th, .report-table td { padding: 10px 8px; }
-  .report-table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+@media (max-width: 480px) {
+  #qr-reader { height: 250px; }
+  .report-photo { width: 40px; height: 52px; }
+  .report-table th { font-size: 0.8rem; }
+  .report-table td { font-size: 0.82rem; }
 }
 </style>
 </head>
@@ -449,23 +428,7 @@ let currentLang = 'th';
 let isAuthenticated = false;
 let currentEmployee = null;
 let html5QrCode = null;
-let db = null;
-let selectedDevice = 'โทรศัพท์';
-
-// 🔥 🔥 🔥 ใส่ Firebase Config ของคุณที่นี่ 🔥 🔥 🔥
-const firebaseConfig = {
-  apiKey: "AIzaSyD3rwk-vdqrCrfK1jfl73ANOf4QobIAF3s",
-  authDomain: "teg-rpph-2025.firebaseapp.com",
-  projectId: "teg-rpph-2025",
-  storageBucket: "teg-rpph-2025.firebasestorage.app",
-  messagingSenderId: "475891332002",
-  appId: "1:475891332002:web:50f9bf30dbf8d23a4d38fb",
-  measurementId: "G-7HXBCCD0MM"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-db = firebase.firestore();
+let checkoutsData = [];
 
 const translations = {
   th: {
@@ -488,7 +451,6 @@ const translations = {
     company: "บริษัท",
     reqTime: "เวลาขออนุญาต",
     outTime: "เวลาออกจริง",
-    device: "อุปกรณ์",
     status: "สถานะ",
     loading: "กำลังโหลดข้อมูล..."
   }
@@ -497,6 +459,7 @@ const translations = {
 document.addEventListener('DOMContentLoaded', function() {
   setupLanguageSwitcher();
   showLogin();
+  loadCheckoutsData();
 });
 
 function setupLanguageSwitcher() {
@@ -548,17 +511,9 @@ function showTabs() {
     </div>
     
     <div id="scanSection" class="scan-section active">
-      <div class="device-select">
-        <label>${t.device}:</label>
-        <select id="deviceSelect" onchange="selectedDevice = this.value">
-          <option value="โทรศัพท์">📱 โทรศัพท์</option>
-          <option value="โน๊ตบุ๊ค">💻 โน๊ตบุ๊ค</option>
-        </select>
-      </div>
-      
       <div id="qr-reader">
-        <input type="file" id="fileInput" accept="image/*" capture="environment">
-        <button id="uploadBtn" title="อัพโหลดภาพ">📷</button>
+        <input type="file" id="fileInput" accept="image/*">
+        <button id="uploadBtn" title="อัพโหลดภาพจากอัลบั้ม">📷</button>
       </div>
       <p style="color:#6b7280;text-align:center;margin-bottom:24px;">${t.scanDesc}</p>
       
@@ -574,7 +529,7 @@ function showTabs() {
             <div class="card-subtitle">กรณี 3.2.2 - พนักงานพักอาศัยภายนอก</div>
           </div>
           <div class="card-body">
-            <img id="scanPhoto" class="card-photo" src="https://via.placeholder.com/100x130/4f46e5/ffffff?text=PHOTO" alt="รูปพนักงาน">
+            <img id="scanPhoto" class="card-photo" src="" alt="รูปพนักงาน">
             <div class="card-details">
               <div class="detail-row">
                 <span class="detail-label">${t.name}:</span>
@@ -610,10 +565,12 @@ function showTabs() {
     </div>
     
     <div id="reportSection" class="report-section">
-      <div id="reportTable">
-        <div class="loading">
-          <div class="spinner"></div>
-          ${t.loading}
+      <div class="report-container">
+        <div id="reportTable">
+          <div class="loading">
+            <div class="spinner"></div>
+            ${t.loading}
+          </div>
         </div>
       </div>
       <button class="main-button btn-logout" onclick="showScan()" style="background:#6b7280;margin-top:20px;">← กลับหน้าสแกน</button>
@@ -622,16 +579,6 @@ function showTabs() {
   
   setupFileUpload();
   updateReportTable();
-  detectDeviceType();
-}
-
-function detectDeviceType() {
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  selectedDevice = isMobile ? 'โทรศัพท์' : 'โน๊ตบุ๊ค';
-  const deviceSelect = document.getElementById('deviceSelect');
-  if (deviceSelect) {
-    deviceSelect.value = selectedDevice;
-  }
 }
 
 function setupFileUpload() {
@@ -640,27 +587,43 @@ function setupFileUpload() {
   
   uploadBtn.addEventListener('click', () => fileInput.click());
   
-  fileInput.addEventListener('change', (e) => {
+  fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (file) {
-      showStatus('✅ สแกนสำเร็จ! กำลังแสดงข้อมูล', 'success');
-      simulateScanSuccess();
+      stopQRScan();
+      await scanImageFile(file);
     }
   });
 }
 
-function simulateScanSuccess() {
-  const demoEmployee = {
-    key: `EMP_${Date.now()}`,
-    name: 'ตัวอย่าง สมใจ ใจดี',
-    code: '680000',
-    company: 'บริษัท ไทยอีสเทิร์น อินโนเวชั่น จำกัด (TEI)',
-    dept: 'HR',
-    time: new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'}),
-    photo: 'https://via.placeholder.com/100x130/4f46e5/ffffff?text=PHOTO'
-  };
-  showEmployeeInfo(demoEmployee);
-  stopQRScan();
+async function scanImageFile(file) {
+  try {
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const img = new Image();
+      img.onload = async function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        
+        try {
+          if (html5QrCode) {
+            const result = await html5QrCode.scanFile(canvas, true);
+            if (result) parseQRData(result);
+          }
+        } catch (err) {
+          console.error('QR Scan failed:', err);
+          showStatus('❌ ไม่พบ QR Code ในภาพ', 'error');
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } catch (err) {
+    console.error('File read error:', err);
+  }
 }
 
 async function startQRScan() {
@@ -671,21 +634,16 @@ async function startQRScan() {
     await html5QrCode.start(
       { facingMode: "environment" },
       config,
-      (decodedText, decodedResult) => {
-        console.log('Live scan:', decodedText);
-        simulateScanSuccess();
+      (decodedText) => {
+        parseQRData(decodedText);
       },
-      (error) => {
-        console.log('Scan error (normal):', error);
-      }
+      (error) => {}
     );
     
     document.getElementById('startScanBtn').style.display = 'none';
     document.getElementById('stopScanBtn').style.display = 'block';
   } catch (err) {
-    console.log('Camera failed, using demo');
-    showStatus('📱 ใช้โหมดทดสอบ (กล้องไม่พร้อม)', 'success');
-    setTimeout(simulateScanSuccess, 1000);
+    showStatus('❌ ไม่สามารถเปิดกล้องได้ ลองอัพโหลดภาพ', 'error');
   }
 }
 
@@ -698,6 +656,62 @@ function stopQRScan() {
       document.getElementById('stopScanBtn').style.display = 'none';
     }).catch(console.error);
   }
+}
+
+function parseQRData(qrData) {
+  try {
+    console.log('QR Data:', qrData);
+    const url = new URL(qrData);
+    const params = new URLSearchParams(url.search);
+    const key = params.get('key');
+    
+    console.log('Parsed Key:', key);
+    
+    if (key && key.startsWith('EMP_')) {
+      // ใช้ localStorage แทน Firebase
+      const employeeData = localStorage.getItem(key);
+      if (employeeData) {
+        const emp = JSON.parse(employeeData);
+        showEmployeeInfo(emp);
+      } else {
+        // ข้อมูลทดสอบ
+        showEmployeeInfo({
+          key: key,
+          name: 'ตัวอย่าง สมใจ ใจดี',
+          code: key.slice(-6),
+          company: 'บริษัท ไทยอีสเทิร์น อินโนเวชั่น จำกัด (TEI)',
+          dept: 'HR',
+          time: new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'}),
+          photo: 'https://via.placeholder.com/90x115/4f46e5/ffffff?text=PHOTO'
+        });
+      }
+    } else {
+      showStatus('❌ QR Code ไม่ถูกต้อง', 'error');
+    }
+  } catch (err) {
+    console.error('QR parse error:', err);
+    showStatus('❌ ไม่สามารถอ่าน QR Code ได้', 'error');
+  }
+}
+
+function showEmployeeInfo(employee) {
+  currentEmployee = employee;
+  document.getElementById('scanName').textContent = employee.name;
+  document.getElementById('scanCode').textContent = employee.code;
+  document.getElementById('scanCompany').textContent = employee.company.split('(')[0].trim();
+  document.getElementById('scanCompanyDetail').textContent = employee.company;
+  document.getElementById('scanDept').textContent = employee.dept;
+  document.getElementById('scanTime').textContent = employee.time;
+  
+  const photoImg = document.getElementById('scanPhoto');
+  photoImg.src = employee.photo || 'https://via.placeholder.com/90x115/4f46e5/ffffff?text=PHOTO';
+  photoImg.onerror = () => {
+    photoImg.src = 'https://via.placeholder.com/90x115/4f46e5/ffffff?text=PHOTO';
+  };
+  
+  document.getElementById('employeeInfo').style.display = 'block';
+  showStatus(`✅ ตรวจพบ: ${employee.name}`, 'success');
+  stopQRScan();
 }
 
 function showScan() {
@@ -715,20 +729,7 @@ function showReport() {
   updateReportTable();
 }
 
-function showEmployeeInfo(employee) {
-  currentEmployee = employee;
-  document.getElementById('scanName').textContent = employee.name;
-  document.getElementById('scanCode').textContent = employee.code;
-  document.getElementById('scanCompany').textContent = employee.company.split('(')[0].trim();
-  document.getElementById('scanCompanyDetail').textContent = employee.company;
-  document.getElementById('scanDept').textContent = employee.dept;
-  document.getElementById('scanTime').textContent = employee.time;
-  
-  document.getElementById('employeeInfo').style.display = 'block';
-  showStatus(`✅ ตรวจพบ: ${employee.name}`, 'success');
-}
-
-async function confirmCheckout() {
+function confirmCheckout() {
   if (!currentEmployee) return;
   
   const now = new Date();
@@ -742,7 +743,6 @@ async function confirmCheckout() {
   });
   
   const record = {
-    id: db.collection('checkouts').doc().id,
     key: currentEmployee.key,
     name: currentEmployee.name,
     code: currentEmployee.code,
@@ -750,23 +750,19 @@ async function confirmCheckout() {
     dept: currentEmployee.dept,
     reqTime: currentEmployee.time,
     outTime: checkoutTime,
-    device: selectedDevice,
     photo: currentEmployee.photo,
     status: 'อนุมัติ',
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    timestamp: now.getTime()
   };
   
-  try {
-    await db.collection('checkouts').add(record);
-    showStatus(`✅ บันทึกสำเร็จ!<br>ชื่อ: ${currentEmployee.name}<br>อุปกรณ์: ${selectedDevice}<br>เวลา: ${checkoutTime}`, 'success');
-    
-    setTimeout(() => {
-      cancelScan();
-      startQRScan();
-    }, 3000);
-  } catch (error) {
-    showStatus('❌ บันทึกไม่สำเร็จ กรุณาลองใหม่', 'error');
-  }
+  checkoutsData.unshift(record);
+  localStorage.setItem('TEG_checkouts', JSON.stringify(checkoutsData.slice(0, 50)));
+  
+  showStatus(`✅ บันทึกสำเร็จ!<br>ชื่อ: ${currentEmployee.name}<br>เวลาออก: ${checkoutTime}`, 'success');
+  
+  setTimeout(() => {
+    cancelScan();
+  }, 3000);
 }
 
 function cancelScan() {
@@ -781,66 +777,65 @@ function logoutGuard() {
   showLogin();
 }
 
-async function updateReportTable() {
+function loadCheckoutsData() {
+  const saved = localStorage.getItem('TEG_checkouts');
+  if (saved) {
+    checkoutsData = JSON.parse(saved);
+  }
+}
+
+function updateReportTable() {
   const reportDiv = document.getElementById('reportTable');
   const t = translations.th;
   
-  try {
-    reportDiv.innerHTML = `<div class="loading"><div class="spinner"></div>${t.loading}</div>`;
-    
-    const snapshot = await db.collection('checkouts')
-      .orderBy('timestamp', 'desc')
-      .limit(50)
-      .get();
-    
-    if (snapshot.empty) {
-      reportDiv.innerHTML = `<div class="empty-report">📭 ยังไม่มีข้อมูลบันทึกเวลาออก</div>`;
-      return;
-    }
-    
-    let html = `
-      <table class="report-table">
-        <thead>
-          <tr>
-            <th>รูป</th>
-            <th>วันที่-เวลา</th>
-            <th>ชื่อ-รหัส</th>
-            <th>แผนก/บริษัท</th>
-            <th>อุปกรณ์</th>
-            <th>เวลาขออนุญาต</th>
-            <th>สถานะ</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-    
-    snapshot.forEach(doc => {
-      const record = doc.data();
-      html += `
-        <tr>
-          <td><img src="${record.photo}" class="report-photo" alt="รูปพนักงาน"></td>
-          <td>${record.outTime}</td>
-          <td>${record.name}<br><small>${record.code}</small></td>
-          <td>${record.dept}<br><small>${record.company.split('(')[0]}</small></td>
-          <td>${record.device}</td>
-          <td>${record.reqTime}</td>
-          <td><span class="status-ok">${record.status}</span></td>
-        </tr>
-      `;
-    });
-    
-    html += '</tbody></table>';
-    reportDiv.innerHTML = html;
-  } catch (error) {
-    reportDiv.innerHTML = `<div class="status-error" style="text-align:center;padding:20px;">❌ ไม่สามารถโหลดข้อมูลได้</div>`;
+  if (checkoutsData.length === 0) {
+    reportDiv.innerHTML = `<div class="empty-report">📭 ยังไม่มีข้อมูลบันทึกเวลาออก</div>`;
+    return;
   }
+  
+  let html = `
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>รูป</th>
+          <th>วันที่-เวลา</th>
+          <th>ชื่อ-รหัส</th>
+          <th>แผนก/บริษัท</th>
+          <th>เวลาขออนุญาต</th>
+          <th>สถานะ</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  checkoutsData.slice(0, 50).forEach(record => {
+    html += `
+      <tr>
+        <td>
+          <img src="${record.photo || 'https://via.placeholder.com/45x58/4f46e5/ffffff?text=PHOTO'}" 
+               class="report-photo" 
+               alt="รูปพนักงาน"
+               onerror="this.src='https://via.placeholder.com/45x58/4f46e5/ffffff?text=PHOTO'">
+        </td>
+        <td>${record.outTime}</td>
+        <td>${record.name}<br><small>${record.code}</small></td>
+        <td>${record.dept}<br><small>${record.company ? record.company.split('(')[0].trim() : 'ไม่ระบุ'}</small></td>
+        <td>${record.reqTime}</td>
+        <td><span class="status-ok">${record.status}</span></td>
+      </tr>
+    `;
+  });
+  
+  html += '</tbody></table>';
+  reportDiv.innerHTML = html;
 }
 
 function showStatus(message, type) {
   const statusEl = document.getElementById('statusMessage');
-  if (!statusEl) return;
-  statusEl.innerHTML = message;
-  statusEl.className = `status-message status-${type}`;
+  if (statusEl) {
+    statusEl.innerHTML = message;
+    statusEl.className = `status-message status-${type}`;
+  }
 }
 </script>
 </body>

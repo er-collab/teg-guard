@@ -25,7 +25,6 @@ body {
   color: #2c3e50;
 }
 
-/* Language Switcher */
 .lang-switcher {
   position: absolute;
   top: 20px;
@@ -73,15 +72,6 @@ body {
   position: relative;
   margin-top: 80px;
 }
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-}
 
 h1 {
   text-align: center;
@@ -96,7 +86,7 @@ h1 {
 
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 label { font-weight: 500; color: #374151; font-size: 0.95rem; letter-spacing: 0.3px; }
-select, input[type="text"], input[type="time"], input[type="file"] {
+select, input[type="text"], input[type="file"] {
   width: 100%;
   padding: 14px 16px;
   border: 2px solid #e5e7eb;
@@ -191,7 +181,6 @@ input[type="file"]::file-selector-button:hover {
   display: none;
 }
 
-/* บัตรพนักงาน (ตัดโลโก้ออก) */
 .employee-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
@@ -254,26 +243,6 @@ input[type="file"]::file-selector-button:hover {
   font-size: 1rem;
   color: #1f2937;
   flex: 1;
-}
-
-.card-footer {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  padding: 20px 28px;
-  border-top: 1px solid rgba(226, 232, 240, 0.8);
-  text-align: center;
-}
-.time-label {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 500;
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-}
-.time-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1e40af;
-  letter-spacing: -0.5px;
 }
 
 .qr-container {
@@ -339,11 +308,10 @@ const translations = {
     code: "รหัสพนักงาน",
     company: "บริษัท",
     dept: "แผนก",
-    time: "เวลาออก",
     photo: "รูปถ่ายพนักงาน",
     generate: "สร้างบัตรพนักงาน",
     pdpa_title: "PDPA - นโยบายความเป็นส่วนตัว",
-    pdpa_text: `บริษัทในฐานะผู้ควบคุมข้อมูลส่วนบุคคล จะเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลของท่าน ได้แก่ ชื่อ–สกุล รหัสพนักงาน รูปถ่าย และข้อมูลวัน–เวลาการเข้า–ออกพื้นที่บริษัท<br>
+    pdpa_text: `บริษัทในฐานะผู้ควบคุมข้อมูลส่วนบุคคล จะเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลของท่าน ได้แก่ ชื่อ–สกุล รหัสพนักงาน รูปถ่าย<br>
 เพื่อวัตถุประสงค์ในการตรวจสอบสิทธิ์ ดูแลความปลอดภัย และบริหารจัดการการเข้า–ออกตามมาตรการของบริษัทเท่านั้น<br><br>
 การกดปุ่ม "สร้าง QR Code" ถือว่าท่านได้อ่าน รับทราบ และ ให้ความยินยอม ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562`,
     consent: "ฉันยอมรับและให้ความยินยอมตาม PDPA",
@@ -352,17 +320,11 @@ const translations = {
     code_label: "รหัส",
     dept_label: "แผนก",
     company_label: "บริษัท",
-    time_label: "เวลาออกนอกพื้นที่",
     qr_title: "QR Code สำหรับการตรวจสอบ",
     qr_hint: "แสดงต่อเจ้าหน้าที่รักษาความปลอดภัย<br><strong>ข้อมูลครบถ้วนถาวร</strong>",
     status_title: "✅ บัตรพร้อมใช้งาน",
     status_text: "พิมพ์หรือบันทึกหน้าจอเพื่อแสดงต่อ รปภ.",
-    new_card: "สร้างบัตรใหม่",
-    guard_title: "ระบบตรวจสอบ รปภ.",
-    guard_success: "ตรวจสอบสำเร็จ",
-    guard_key: "Key",
-    guard_wait: "รอเชื่อมต่อฐานข้อมูล",
-    guard_back: "กลับหน้าหลัก"
+    new_card: "สร้างบัตรใหม่"
   },
   mm: {
     title: "စက်ရုံပြင်ပ ထွက်ခွင့်တောင်း",
@@ -371,11 +333,10 @@ const translations = {
     code: "ဝန်ထမ်းနံပါတ်",
     company: "ကုမ္ပဏီ",
     dept: "ဌာန",
-    time: "ထွက်ချိန်",
     photo: "ဓာပုံ",
     generate: "ကတ်ဖန်တီး",
     pdpa_title: "PDPA - ပုဂ္ဂလ်ရေးကိုယ်ရေးအချက်အလက်",
-    pdpa_text: `ကုမ္ပဏီသည် ကိုယ်ရေးအချက်အလက်ထိန်းချုပ်သူအဖြစ် သင်၏ ကိုယ်ရေးအချက်အလက်များကို စုဆောင်း၊ အသုံးပြု၊ လုပ်ဆောင်မည် အမည်၊ ဝန်ထမ်းနံပါတ်၊ ဓာပုံ၊ စက်ရုံအဝင်အထွက်ရက်စွဲနှင့်အချိန်<br>
+    pdpa_text: `ကုမ္ပဏီသည် ကိုယ်ရေးအချက်အလက်ထိန်းချုပ်သူအဖြစ် သင်၏ ကိုယ်ရေးအချက်အလက်များကို စုဆောင်း၊ အသုံးပြု၊ လုပ်ဆောင်မည် အမည်၊ ဝန်ထမ်းနံပါတ်၊ ဓာပုံ<br>
 သင့်ခွင့်ပြုချက်စစ်ဆေး၊ လုံခြုံရေး စီမံခန့်ခွဲရန်နှင့် ကုမ္ပဏီ စည်းမျဉ်းများအတိုင်း ဝင်ရောက်စီမံရန်သာ ရည်ရွယ်သည်<br><br>
 "QR Code ထုတ်လုပ်ရန်" ခလုတ်နှိပ်ခြင်းဖြင့် သင်သည် PDPA ဥပဒေအရ နားလည်ပြီး ခွင့်ပြုချက်ပေးသည်`,
     consent: "PDPA အရ လက်ခံပြီး ခွင့်ပြုချက်ပေး",
@@ -384,17 +345,11 @@ const translations = {
     code_label: "နံပါတ်",
     dept_label: "ဌာန",
     company_label: "ကုမ္ပဏီ",
-    time_label: "ထွက်ချိန်",
     qr_title: "စစ်ဆေးရန် QR Code",
     qr_hint: "လုံခြုံရေးဝန်ထမ်းထံ ပြပါ<br><strong>အချက်အလက်ပြည့်စုံသည်</strong>",
     status_title: "✅ ကတ်အသုံးပြုရန်အဆင်သင့်",
     status_text: "ပရင့်လုပ် သို့မဟုတ် မျက်နှာပြင်သိမ်းပါ",
-    new_card: "ကတ်အသစ်ဖန်တီး",
-    guard_title: "စစ်ဆေးရေး စနစ်",
-    guard_success: "စစ်ဆေးပြီးစီး",
-    guard_key: "Key",
-    guard_wait: "ဒေတာဘေ့စ်ချိတ်ဆက်ရန် စောင့်နေသည်",
-    guard_back: "ပင်မစာမျက်နှာ"
+    new_card: "ကတ်အသစ်ဖန်တီး"
   },
   km: {
     title: "ស្នើសុំចាប់អារម្មណ៍ចេញក្រៅតំបន់",
@@ -403,11 +358,10 @@ const translations = {
     code: "កូដបុគ្គលិក",
     company: "ក្រុមហ៊ុន",
     dept: "នាយកដ្ឋាន",
-    time: "ម៉ោងចេញ",
     photo: "រូបថត",
     generate: "បង្កើតកាត",
     pdpa_title: "PDPA - គោលនយោបាយឯកជនភាព",
-    pdpa_text: `ក្រុមហ៊ុនក្នុងនាមជាអ្នកគ្រប់គ្រងទិន្នន័យផ្ទាល់ខ្លួន នឹងប្រមូល ប្រើប្រាស់ និងដំណើរការទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក រួមមាន ឈ្មោះ កូដបុគ្គលិក រូបថត និងព័ត៌មានថ្ងៃ-ម៉ោងចូល-ចេញតំបន់ក្រុមហ៊ុន<br>
+    pdpa_text: `ក្រុមហ៊ុនក្នុងនាមជាអ្នកគ្រប់គ្រងទិន្នន័យផ្ទាល់ខ្លួន នឹងប្រមូล ប្រើប្រាស់ និងដំណើរការទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក រួមមាន ឈ្មោះ កូដបុគ្គលិក រូបថត<br>
 សម្រាប់គោលបំណងត្រួតពិនិត្យសិទ្ធិ គ្រប់គ្រងសុវត្ថិភាព និងគ្រប់គ្រងការចូល-ចេញតាមវិធានការក្រុមហ៊ុនតែប៉ុណ្ណោះ<br><br>
 ការចុចប៊ូតុង "បង្កើត QR Code" ត្រូវបានចាត់ទុកថាអ្នកបានអានយល់ដឹង និងយល់ព្រមតាមច្បាប់ការពារទិន្នន័យផ្ទាល់ខ្លួន ឆ្នាំ២០២២`,
     consent: "ខ្ញុំយល់ព្រមនិងផ្តល់ការយល់ព្រមតាម PDPA",
@@ -416,17 +370,11 @@ const translations = {
     code_label: "កូដ",
     dept_label: "នាយកដ្ឋាន",
     company_label: "ក្រុមហ៊ុន",
-    time_label: "ម៉ោងចេញក្រៅតំបន់",
     qr_title: "QR Code សម្រាប់ត្រួតពិនិត្យ",
     qr_hint: "បង្ហាញដល់មន្ត្រីសុវត្ថិភាព<br><strong>ព័ត៌មានពេញលេញនិរន្តរភាព</strong>",
     status_title: "✅ កាតត្រៀមរួចសម្រាប់ប្រើប្រាស់",
     status_text: "បោះពុម្ពឬរក្សាទុកអេក្រង់ដើម្បីបង្ហាញដល់ សៀមហ្វុង",
-    new_card: "បង្កើតកាតថ្មី",
-    guard_title: "ប្រព័ន្ធត្រួតពិនិត្យ សៀមហ្វុង",
-    guard_success: "ត្រួតពិនិត្យជោគជ័យ",
-    guard_key: "Key",
-    guard_wait: "រង់ចាំការតភ្ជាប់មូលដ្ឋានទិន្នន័យ",
-    guard_back: "ត្រលប់ទៅទំព័រដើម"
+    new_card: "បង្កើតកាតថ្មី"
   }
 };
 
@@ -445,15 +393,7 @@ let currentLang = 'th';
 
 document.addEventListener('DOMContentLoaded', function() {
   setupLanguageSwitcher();
-  const params = new URLSearchParams(window.location.search);
-  const key = params.get('key');
-  const container = document.getElementById('main-container');
-  
-  if (key) {
-    showGuardMode(container, key);
-  } else {
-    showForm(container);
-  }
+  showForm(document.getElementById('main-container'));
 });
 
 function setupLanguageSwitcher() {
@@ -462,7 +402,7 @@ function setupLanguageSwitcher() {
       currentLang = this.dataset.lang;
       document.querySelector('.lang-btn.active').classList.remove('active');
       this.classList.add('active');
-      if (document.getElementById('form1')) showForm(document.getElementById('main-container'));
+      showForm(document.getElementById('main-container'));
     });
   });
 }
@@ -476,11 +416,11 @@ function showForm(container) {
     <form id="form1" class="form-section">
       <div class="form-group">
         <label>${t.name}</label>
-        <input type="text" id="name1" required placeholder="ตัวอย่าง สมใจ ใจดี">
+        <input type="text" id="name1" required placeholder="กรุณากรอกชื่อ-นามสกุล">
       </div>
       <div class="form-group">
         <label>${t.code}</label>
-        <input type="text" id="code1" required placeholder="ตัวอย่าง 680000">
+        <input type="text" id="code1" required placeholder="กรุณากรอกรหัสพนักงาน">
       </div>
       <div class="form-group">
         <label>${t.company}</label>
@@ -491,155 +431,154 @@ function showForm(container) {
       </div>
       <div class="form-group">
         <label>${t.dept}</label>
-        <input type="text" id="dept1" required placeholder="ตัวอย่าง HR">
-      </div>
-      <div class="form-group">
-        <label>${t.time}</label>
-        <input type="time" id="time1" required value="21:00">
+        <input type="text" id="dept1" required placeholder="กรุณากรอกแผนก">
       </div>
       
       <div class="pdpa-notice">
         <h4>${t.pdpa_title}</h4>
         <div>${t.pdpa_text}</div>
         <label class="pdpa-checkbox">
-          <input type="checkbox" id="pdpa-consent" required>
+          <input type="checkbox" id="pdpa-consent">
           <span>${t.consent}</span>
         </label>
       </div>
       
       <div class="form-group">
         <label>${t.photo}</label>
-        <input type="file" id="photo1" accept="image/*" capture="user" required>
-        <img id="preview1">
+        <input type="file" id="photo1" accept="image/*" capture="user">
+        <img id="preview1" style="display:none;">
       </div>
-      <button type="submit" class="main-button generate-button" id="generateBtn">${t.generate}</button>
+      <button type="submit" class="main-button generate-button" id="generateBtn" disabled>${t.generate}</button>
     </form>
   `;
   
-  // Event listeners
+  // Photo preview
   document.getElementById('photo1').addEventListener('change', function(e) {
     const file = e.target.files[0];
+    const preview = document.getElementById('preview1');
+    const btn = document.getElementById('generateBtn');
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        document.getElementById('preview1').src = e.target.result;
-        document.getElementById('preview1').style.display = 'block';
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        checkFormReady();
       };
       reader.readAsDataURL(file);
+    } else {
+      preview.style.display = 'none';
+      checkFormReady();
     }
   });
   
-  document.getElementById('form1').addEventListener('submit', createProfessionalCard);
-  
-  // Disable button if PDPA not checked
-  document.getElementById('pdpa-consent').addEventListener('change', function() {
-    const btn = document.getElementById('generateBtn');
-    btn.disabled = !this.checked;
+  // Form submit
+  document.getElementById('form1').addEventListener('submit', function(e) {
+    e.preventDefault();
+    createProfessionalCard();
   });
+  
+  // Check form ready
+  function checkFormReady() {
+    const name = document.getElementById('name1').value.trim();
+    const code = document.getElementById('code1').value.trim();
+    const company = document.getElementById('company1').value;
+    const dept = document.getElementById('dept1').value.trim();
+    const pdpa = document.getElementById('pdpa-consent').checked;
+    const photo = document.getElementById('photo1').files.length > 0;
+    
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = !(name && code && company && dept && pdpa && photo);
+  }
+  
+  // Watch all inputs
+  document.getElementById('name1').addEventListener('input', checkFormReady);
+  document.getElementById('code1').addEventListener('input', checkFormReady);
+  document.getElementById('company1').addEventListener('change', checkFormReady);
+  document.getElementById('dept1').addEventListener('input', checkFormReady);
+  document.getElementById('pdpa-consent').addEventListener('change', checkFormReady);
 }
 
-function createProfessionalCard(e) {
-  e.preventDefault();
+function createProfessionalCard() {
   const name = document.getElementById('name1').value;
   const code = document.getElementById('code1').value;
   const company = document.getElementById('company1').value;
   const dept = document.getElementById('dept1').value;
-  const time = document.getElementById('time1').value;
   const file = document.getElementById('photo1').files[0];
-  
-  if (!document.getElementById('pdpa-consent').checked) {
-    alert('กรุณายอมรับเงื่อนไข PDPA ก่อน');
-    return;
-  }
-  
-  if (!file) {
-    alert('กรุณาเลือกไฟล์รูปถ่าย');
-    return;
-  }
+  const t = translations[currentLang];
   
   const reader = new FileReader();
   reader.onload = function(e) {
     const photoData = e.target.result;
     const key = 'EMP_' + Date.now();
-    const t = translations[currentLang];
-    
-    const container = document.getElementById('main-container');
-    container.innerHTML = `
-      <div class="card-section">
-        <div class="employee-card">
-          <div class="card-header">
-            <h3 class="card-company">${company}</h3>
-            <p class="card-subtitle">${t.card_subtitle}</p>
-          </div>
-          
-          <div class="card-body">
-            <img src="${photoData}" class="card-photo" alt="รูปพนักงาน">
-            <div class="card-details">
-              <div class="detail-row">
-                <span class="detail-label">${t.name_label}</span>
-                <span class="detail-value">${name}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">${t.code_label}</span>
-                <span class="detail-value">${code}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">${t.dept_label}</span>
-                <span class="detail-value">${dept}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">${t.company_label}</span>
-                <span class="detail-value">${company}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="card-footer">
-            <div class="time-label">${t.time_label}</div>
-            <div class="time-value">${time} น.</div>
-          </div>
-        </div>
-        
-        <div class="qr-container">
-          <div class="qr-title">${t.qr_title}</div>
-          <canvas id="qr-canvas"></canvas>
-          <div class="qr-hint">${t.qr_hint}</div>
-        </div>
-        
-        <div class="status-info">
-          <h3>${t.status_title}</h3>
-          <p>${t.status_text}</p>
-        </div>
-        
-        <button class="main-button" onclick="location.reload()" style="background:#6b7280;">${t.new_card}</button>
-      </div>
-    `;
-    
-    setTimeout(() => {
-      const canvas = document.getElementById('qr-canvas');
-      new QRious({
-        element: canvas,
-        value: `${window.location.origin}${window.location.pathname}?key=${key}`,
-        size: 240,
-        level: 'H'
-      });
-    }, 200);
+    showEmployeeCard(name, code, company, dept, photoData, key, t);
   };
   reader.readAsDataURL(file);
 }
 
-function showGuardMode(container, key) {
-  const t = translations[currentLang];
+function showEmployeeCard(name, code, company, dept, photoData, key, t) {
+  const container = document.getElementById('main-container');
   container.innerHTML = `
-    <h1>${t.guard_title}</h1>
-    <div style="background:rgba(248,250,252,0.95);padding:32px;border-radius:20px;text-align:center;border:1px solid #e2e8f0;">
-      <div style="font-size:3rem;color:#3b82f6;margin-bottom:20px;">✓</div>
-      <h3 style="color:#1e293b;margin-bottom:12px;">${t.guard_success}</h3>
-      <p style="color:#64748b;font-size:1.05rem;">${t.guard_key}: <strong>${key}</strong></p>
-      <p style="color:#475569;margin-top:8px;">${t.guard_wait}</p>
-      <button class="main-button" onclick="location.href='./'" style="background:#6b7280;margin-top:24px;">${t.guard_back}</button>
+    <div class="card-section">
+      <div class="employee-card">
+        <div class="card-header">
+          <h3 class="card-company">${company}</h3>
+          <p class="card-subtitle">${t.card_subtitle}</p>
+        </div>
+        
+        <div class="card-body">
+          <img src="${photoData}" class="card-photo" alt="รูปพนักงาน">
+          <div class="card-details">
+            <div class="detail-row">
+              <span class="detail-label">${t.name_label}</span>
+              <span class="detail-value">${name}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">${t.code_label}</span>
+              <span class="detail-value">${code}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">${t.dept_label}</span>
+              <span class="detail-value">${dept}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">${t.company_label}</span>
+              <span class="detail-value">${company}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="qr-container">
+        <div class="qr-title">${t.qr_title}</div>
+        <canvas id="qr-canvas"></canvas>
+        <div class="qr-hint">${t.qr_hint}</div>
+      </div>
+      
+      <div class="status-info">
+        <h3>${t.status_title}</h3>
+        <p>${t.status_text}</p>
+      </div>
+      
+      <button class="main-button" onclick="location.reload()" style="background:#6b7280;">${t.new_card}</button>
     </div>
   `;
+  
+  // Generate QR Code
+  setTimeout(() => {
+    try {
+      const canvas = document.getElementById('qr-canvas');
+      const qrUrl = `${window.location.origin}${window.location.pathname}?key=${key}`;
+      new QRious({
+        element: canvas,
+        value: qrUrl,
+        size: 240,
+        level: 'H'
+      });
+    } catch (error) {
+      console.error('QR Error:', error);
+      document.getElementById('qr-canvas').innerHTML = 'QR Code Error';
+    }
+  }, 100);
 }
 </script>
 </body>
