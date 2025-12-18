@@ -5,9 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>TEG 3.2.2 - บัตรพนักงานภายนอก</title>
 
+<!-- Firebase SDK (compat version สำหรับ CDN) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<!-- สร้าง QR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<!-- อ่าน QR จากกล้อง/รูป -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
@@ -21,7 +26,7 @@ body {
   background-position: center;
   background-attachment: fixed;
   min-height: 100vh;
-  padding: 10px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,23 +35,24 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ปุ่มเปลี่ยนภาษา */
 .lang-switcher {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 20px;
+  right: 20px;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   z-index: 1000;
 }
 .lang-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(255,255,255,0.9);
   color: #374151;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
@@ -59,229 +65,260 @@ body {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border-color: #3b82f6;
+  box-shadow: 0 4px 15px rgba(59,130,246,0.3);
 }
+.lang-btn:active { transform: scale(0.95); }
 
 .container {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  padding: 20px 16px;
+  border-radius: 24px;
+  padding: 28px 24px;
   width: 100%;
   max-width: 420px;
-  max-height: 92vh;
+  max-height: 95vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   position: relative;
-  margin-top: 70px;
+  margin-top: 80px;
 }
 
 h1 {
   text-align: center;
   color: #1a1a1a;
   font-weight: 600;
-  font-size: clamp(1.2rem, 4vw, 1.4rem);
-  margin: 0 0 12px 0;
+  font-size: clamp(1.4rem, 4vw, 1.6rem);
+  margin: 0 0 20px 0;
+  letter-spacing: 0.5px;
 }
 
-.form-section, .card-section { display: flex; flex-direction: column; gap: 16px; }
+.form-section, .card-section { display: flex; flex-direction: column; gap: 20px; }
 
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-label { font-weight: 500; color: #374151; font-size: 0.9rem; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+label { font-weight: 500; color: #374151; font-size: 0.95rem; letter-spacing: 0.3px; }
 select, input[type="text"], input[type="file"] {
   width: 100%;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.8);
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #1f2937;
+  font-weight: 400;
   transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
 }
+select option { font-family: inherit; }
 input:focus, select:focus {
   outline: none;
   border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+input[type="file"] {
+  padding: 12px;
 }
 input[type="file"]::file-selector-button {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  margin-right: 10px;
+  margin-right: 12px;
+  transition: all 0.2s;
+}
+input[type="file"]::file-selector-button:active {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
 }
 
 .pdpa-notice {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border: 1px solid #f59e0b;
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 0.8rem;
-  line-height: 1.4;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
   color: #92400e;
 }
-.pdpa-notice h4 { color: #b45309; margin: 0 0 6px 0; font-size: 0.9rem; }
+.pdpa-notice h4 { color: #b45309; margin: 0 0 8px 0; font-weight: 600; font-size: 0.95rem; }
 .pdpa-checkbox {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 12px;
+  margin-top: 12px;
+}
+.pdpa-checkbox input[type="checkbox"] {
+  width: auto;
+  margin: 2px 0 0 0;
+  transform: scale(1.2);
 }
 
 .main-button {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  letter-spacing: 0.5px;
   touch-action: manipulation;
 }
 .generate-button {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+.generate-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
+}
+.generate-button:active:not(:disabled) {
+  transform: translateY(0);
 }
 .generate-button:disabled {
   background: #9ca3af;
   cursor: not-allowed;
+  transform: none;
 }
 
 #preview1 {
-  width: 80px;
-  height: 100px;
+  width: 100px;
+  height: 130px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 2px solid #e5e7eb;
-  margin-top: 6px;
+  margin-top: 8px;
   display: none;
 }
 
 .employee-card {
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
   padding: 0;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .card-header {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 24px 28px 20px;
   text-align: center;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 .card-company {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #1e293b;
-  margin: 0 0 2px 0;
+  margin: 0 0 4px 0;
 }
 .card-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #64748b;
+  font-weight: 400;
   margin: 0;
 }
 
 .card-body {
-  padding: 16px;
+  padding: 28px;
   display: flex;
-  gap: 14px;
+  gap: 20px;
 }
 .card-photo {
-  width: 80px;
-  height: 100px;
-  border-radius: 10px;
+  width: 100px;
+  height: 130px;
+  border-radius: 14px;
   object-fit: cover;
   flex-shrink: 0;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 .card-details {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
-.detail-row { display: flex; align-items: flex-start; gap: 8px; }
+.detail-row { display: flex; align-items: flex-start; gap: 12px; }
 .detail-label {
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #374151;
-  min-width: 50px;
+  min-width: 55px;
   flex-shrink: 0;
 }
 .detail-value {
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #1f2937;
   flex: 1;
 }
 
 .qr-container {
-  margin-top: 16px;
-  padding: 16px;
+  margin-top: 24px;
+  padding: 24px;
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 14px;
+  border-radius: 20px;
   border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 .qr-title {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: #1f2937;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  letter-spacing: 0.3px;
 }
 #qr-canvas {
-  width: 200px;
-  height: 200px;
-  border: 2px solid #f3f4f6;
-  border-radius: 12px;
+  width: 240px;
+  height: 240px;
+  border: 3px solid #f3f4f6;
+  border-radius: 16px;
   background: white;
-  margin: 0 auto 10px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+  margin: 0 auto 16px;
 }
-.qr-hint { font-size: 0.8rem; color: #6b7280; line-height: 1.3; }
+.qr-hint { font-size: 0.9rem; color: #6b7280; line-height: 1.5; }
 
 .status-info {
-  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
   border: 1px solid #a7f3d0;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 14px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
   text-align: center;
 }
-.status-info h3 { color: #166534; font-size: 1rem; margin: 0 0 6px 0; }
-.status-info p { color: #047857; margin: 0; font-size: 0.85rem; }
-
-.screenshot-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  margin-top: 10px;
-}
+.status-info h3 { color: #166534; font-size: 1.1rem; font-weight: 600; margin: 0 0 8px 0; }
+.status-info p { color: #047857; margin: 0; font-size: 0.95rem; }
 
 @media (max-width: 480px) {
-  .container { padding: 16px 12px; margin-top: 80px; }
-  .card-body { flex-direction: column; align-items: center; }
-  .card-photo { width: 100px; height: 130px; }
-  #qr-canvas { width: 180px; height: 180px; }
+  .container { padding: 20px 16px; margin-top: 100px; }
+  .card-body { flex-direction: column; gap: 16px; }
+  .card-photo { width: 100%; height: 120px; align-self: center; }
+  #qr-canvas { width: 220px; height: 220px; }
 }
 
-/* รปภ. */
+/* ===== ปุ่มเฟือง รปภ. มุมล่างขวา ===== */
 .guard-settings {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 25px;
+  right: 25px;
   z-index: 1000;
 }
 .guard-btn {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   border: 3px solid rgba(255,255,255,0.4);
   background: rgba(255,255,255,0.98);
@@ -289,16 +326,30 @@ input[type="file"]::file-selector-button {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  backdrop-filter: blur(15px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   transition: all 0.3s ease;
+  animation: pulse 2s infinite;
   touch-action: manipulation;
 }
+.guard-btn:active {
+  transform: scale(0.95) rotate(10deg);
+  background: white;
+  box-shadow: 0 12px 35px rgba(59,130,246,0.4);
+}
 .guard-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   fill: #ef4444;
+  stroke: #dc2626;
+  stroke-width: 1.5;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 8px 35px rgba(239,68,68,0.4); }
 }
 
+/* Modal login รปภ. */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -311,54 +362,57 @@ input[type="file"]::file-selector-button {
 }
 .modal {
   background: white;
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 24px;
   width: 90%;
-  max-width: 360px;
+  max-width: 380px;
   box-shadow: 0 25px 70px rgba(0,0,0,0.4);
 }
-.modal h2 { margin: 0 0 10px 0; font-size: 1.1rem; text-align: center; }
+.modal h2 { margin: 0 0 12px 0; font-size: 1.2rem; color: #111; text-align: center; }
+.modal p { margin: 0 0 12px 0; font-size: 0.9rem; color: #4b5563; text-align: center; }
 .modal input {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 16px;
 }
-.modal-buttons { display: flex; gap: 10px; }
+.modal input:focus { border-color: #3b82f6; outline: none; }
+.modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
 .btn-small {
   flex: 1;
-  padding: 11px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   border: none;
   font-weight: 500;
   cursor: pointer;
+  touch-action: manipulation;
 }
 .btn-cancel { background: #f3f4f6; color: #374151; }
 .btn-login { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
 
+/* แผง รปภ. */
 .guard-panel {
   display: none;
   background: rgba(255,255,255,0.95);
-  border-radius: 18px;
-  padding: 16px;
-  margin-top: 80px;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  max-width: 95%;
-  width: 100%;
-  max-height: 85vh;
+  max-height: 80vh;
   overflow-y: auto;
 }
-.guard-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.guard-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
 .tab-btn {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   border: 2px solid #e5e7eb;
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 500;
+  touch-action: manipulation;
 }
 .tab-btn.active {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
@@ -371,178 +425,109 @@ input[type="file"]::file-selector-button {
 
 #video {
   width: 100%;
-  height: 220px;
+  height: 260px;
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #f9fafb;
 }
 #canvas { display: none; }
 
+.scan-controls {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.scan-controls label {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
 .employee-detail {
   background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-  border-radius: 14px;
-  padding: 16px;
+  border-radius: 16px;
+  padding: 20px;
   border: 1px solid #a7f3d0;
-  margin-top: 14px;
+  margin-top: 16px;
 }
 .employee-photo {
-  width: 90px;
-  height: 120px;
+  width: 100px;
+  height: 130px;
   object-fit: cover;
-  border-radius: 10px;
-  margin: 0 auto 12px;
+  border-radius: 12px;
+  margin: 0 auto 16px;
   display: block;
   border: 3px solid white;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 10px;
-  font-size: 0.9rem;
+  gap: 12px;
+  font-size: 0.95rem;
 }
 .detail-label { font-weight: 600; color: #047857; }
 
 .guard-confirm-btn {
-  margin-top: 12px;
+  margin-top: 14px;
   width: 100%;
-  padding: 11px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #f97316, #ea580c);
   color: white;
   font-weight: 600;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
-/* 🔥 รายงาน - แสดงเวลาสแกนทุกครั้ง */
-.report-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* รายงาน */
 .report-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 .report-table th {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
-  padding: 10px 6px;
+  padding: 12px 8px;
   font-weight: 600;
-  white-space: nowrap;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
-.report-table td { 
-  padding: 8px 6px; 
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: top;
-}
+.report-table td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; }
 .report-table tr:hover { background: #f8fafc; }
-.photo-cell { width: 50px; text-align: center; }
+.photo-cell { width: 60px; text-align: center; }
 .photo-cell img {
-  width: 35px;
-  height: 45px;
+  width: 40px;
+  height: 50px;
   object-fit: cover;
-  border-radius: 5px;
-}
-
-/* 🔥 ประวัติสแกน */
-.scan-history {
-  max-height: 150px;
-  overflow-y: auto;
-  padding: 4px;
-  background: #f9fafb;
   border-radius: 6px;
-  font-size: 0.7rem;
-}
-.scan-item {
-  padding: 4px 6px;
-  margin-bottom: 3px;
-  background: white;
-  border-radius: 4px;
-  border-left: 3px solid #3b82f6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-}
-.scan-item.confirmed {
-  border-left-color: #10b981;
-  background: #ecfdf5;
-}
-.scan-time {
-  font-weight: 600;
-  color: #1f2937;
-  white-space: nowrap;
-}
-.scan-badge {
-  background: #10b981;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .report-table {
-    font-size: 0.65rem;
-  }
-  .report-table th, .report-table td {
-    padding: 6px 4px;
-  }
-  .scan-history {
-    max-height: 120px;
-    font-size: 0.65rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .guard-panel {
-    max-width: 1400px;
-  }
-  .report-table {
-    font-size: 0.85rem;
-  }
-  .scan-history {
-    max-height: 200px;
-    font-size: 0.75rem;
-  }
 }
 
 .export-btn {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  margin-top: 14px;
+  margin-top: 16px;
+  touch-action: manipulation;
 }
-
-.total-scans {
-  display: inline-block;
-  background: #3b82f6;
-  color: white;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 0.85rem;
+.clear-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 </style>
 </head>
 <body>
 
+<!-- ปุ่มเฟือง รปภ. มุมล่างขวา -->
 <div class="guard-settings">
   <button class="guard-btn" id="guardBtn" title="โหมด รปภ.">
     <svg viewBox="0 0 24 24">
@@ -551,16 +536,18 @@ input[type="file"]::file-selector-button {
   </button>
 </div>
 
+<!-- ปุ่มภาษา -->
 <div class="lang-switcher">
   <button class="lang-btn active" data-lang="th">ไทย</button>
   <button class="lang-btn" data-lang="mm">မြန်မာ</button>
   <button class="lang-btn" data-lang="km">ខ្មែរ</button>
 </div>
 
+<!-- Modal login รปภ. -->
 <div class="modal-backdrop" id="guardModal">
   <div class="modal">
     <h2>🔐 เข้าโหมด รปภ.</h2>
-    <p style="text-align:center;color:#6b7280;font-size:0.85rem;margin:0 0 10px 0;">กรุณากรอกรหัสผ่าน</p>
+    <p>กรุณากรอกรหัสผ่าน</p>
     <input type="password" id="guardPassword" placeholder="********">
     <div class="modal-buttons">
       <button class="btn-small btn-cancel" id="cancelLogin">ยกเลิก</button>
@@ -569,6 +556,7 @@ input[type="file"]::file-selector-button {
   </div>
 </div>
 
+<!-- แผง รปภ. -->
 <div class="guard-panel" id="guardPanel">
   <div class="guard-tabs">
     <button class="tab-btn active" data-tab="scan">สแกน QR</button>
@@ -578,10 +566,10 @@ input[type="file"]::file-selector-button {
   <div class="scan-section active" id="scanTab">
     <video id="video" autoplay muted playsinline></video>
     <canvas id="canvas"></canvas>
-    <div style="margin-top:8px;">
-      <label style="font-size:0.8rem;color:#4b5563;">
-        หรืออัปโหลดรูป QR:
-        <input type="file" id="qrImageInput" accept="image/*" style="margin-top:6px;padding:8px;font-size:0.8rem;">
+    <div class="scan-controls">
+      <label>
+        หรืออัปโหลดรูป QR จากอัลบั้ม:
+        <input type="file" id="qrImageInput" accept="image/*">
       </label>
     </div>
     <div id="scan-result" class="employee-detail" style="display:none;">
@@ -599,30 +587,46 @@ input[type="file"]::file-selector-button {
   </div>
 
   <div class="report-section" id="reportTab">
-    <div class="report-container">
-      <table class="report-table" id="reportTable">
-        <thead>
-          <tr>
-            <th>รูป</th>
-            <th>ชื่อ</th>
-            <th>รหัส</th>
-            <th>บริษัท</th>
-            <th>แผนก</th>
-            <th>เวลาสร้างบัตร</th>
-            <th>รปภ.ยืนยัน</th>
-            <th style="min-width:200px;">ประวัติสแกน (เวลา)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <table class="report-table" id="reportTable">
+      <thead>
+        <tr>
+          <th>รูป</th>
+          <th>ชื่อ</th>
+          <th>รหัส</th>
+          <th>บริษัท</th>
+          <th>แผนก</th>
+          <th>เวลาแจ้งออก</th>
+          <th>เวลารปภ.ยืนยัน</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
     <button class="export-btn" id="exportExcel">📊 ดาวน์โหลด Excel</button>
+    <button class="export-btn clear-btn" id="clearDataBtn">🗑️ ล้างข้อมูลทั้งหมด</button>
   </div>
 </div>
 
+<!-- Main พนักงาน -->
 <div class="container" id="main-container"></div>
 
 <script>
+// ========== Firebase Configuration ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyA1QpQnRkkFJiLhm1LNiLN8H11PznzYgBQ",
+  authDomain: "teg-guard-system.firebaseapp.com",
+  databaseURL: "https://teg-guard-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "teg-guard-system",
+  storageBucket: "teg-guard-system.firebasestorage.app",
+  messagingSenderId: "958296665058",
+  appId: "1:958296665058:web:8e9b7f0fbfbf1d8fa7e7bb"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+console.log('🔥 Firebase initialized');
+
+// ========== Translations ==========
 const translations = {
   th: {
     title: "ขออนุญาตออกนอกพื้นที่",
@@ -634,67 +638,70 @@ const translations = {
     photo: "รูปถ่ายพนักงาน",
     generate: "สร้างบัตรพนักงาน",
     pdpa_title: "PDPA - นโยบายความเป็นส่วนตัว",
-    pdpa_text: `บริษัทจะเก็บข้อมูล ชื่อ รหัส รูปถ่าย เพื่อความปลอดภัยและบริหารจัดการเข้า-ออกเท่านั้น การกด "สร้างบัตร" = ยินยอมตาม พ.ร.บ.คุ้มครองข้อมูล`,
-    consent: "ฉันยอมรับตาม PDPA",
+    pdpa_text: `บริษัทในฐานะผู้ควบคุมข้อมูลส่วนบุคคล จะเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลของท่าน ได้แก่ ชื่อ–สกุล รหัสพนักงาน รูปถ่าย<br>
+เพื่อวัตถุประสงค์ในการตรวจสอบสิทธิ์ ดูแลความปลอดภัย และบริหารจัดการการเข้า–ออกตามมาตรการของบริษัทเท่านั้น<br><br>
+การกดปุ่ม "สร้าง QR Code" ถือว่าท่านได้อ่าน รับทราบ และ ให้ความยินยอม ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562`,
+    consent: "ฉันยอมรับและให้ความยินยอมตาม PDPA",
     card_subtitle: "กรณี 3.2.2 - พนักงานพักอาศัยภายนอก",
     name_label: "ชื่อ",
     code_label: "รหัส",
     dept_label: "แผนก",
     company_label: "บริษัท",
-    qr_title: "QR Code",
-    qr_hint: "แสดงต่อรปภ.",
+    qr_title: "QR Code สำหรับการตรวจสอบ",
+    qr_hint: "แสดงต่อเจ้าหน้าที่รักษาความปลอดภัย<br><strong>ข้อมูลครบถ้วนถาวร</strong>",
     status_title: "✅ บัตรพร้อมใช้งาน",
-    status_text: "บันทึกหน้าจอหรือพิมพ์",
-    new_card: "สร้างบัตรใหม่",
-    screenshot: "บันทึกหน้าจอ"
+    status_text: "พิมพ์หรือบันทึกหน้าจอเพื่อแสดงต่อ รปภ.",
+    new_card: "สร้างบัตรใหม่"
   },
   mm: {
-    title: "စက်ရုံပြင်ပ ထွက်ခွင့်",
-    subtitle: "အခြေအနေ 3.2.2",
+    title: "စက်ရုံပြင်ပ ထွက်ခွင့်တောင်း",
+    subtitle: "အခြေအနေ 3.2.2 - ပြင်ပနေထိုင်သူ ဝန်ထမ်း",
     name: "အမည်",
-    code: "နံပါတ်",
+    code: "ဝန်ထမ်းနံပါတ်",
     company: "ကုမ္ပဏီ",
     dept: "ဌာန",
     photo: "ဓာပုံ",
     generate: "ကတ်ဖန်တီး",
-    pdpa_title: "PDPA",
-    pdpa_text: `ကုမ္ပဏီသည် အချက်အလက်များကို လုံခြုံရေးအတွက်သာ သိမ်းမည်`,
-    consent: "PDPA လက်ခံ",
-    card_subtitle: "အခြေအနေ 3.2.2",
+    pdpa_title: "PDPA - ပုဂ္ဂလ်ရေးကိုယ်ရေးအချက်အလက်",
+    pdpa_text: `ကုမ္ပဏီသည် ကိုယ်ရေးအချက်အလက်ထိန်းချုပ်သူအဖြစ် သင်၏ ကိုယ်ရေးအချက်အလက်များကို စုဆောင်း၊ အသုံးပြု၊ လုပ်ဆောင်မည် အမည်၊ ဝန်ထမ်းနံပါတ်၊ ဓာပုံ<br>
+သင့်ခွင့်ပြုချက်စစ်ဆေး၊ လုံခြုံရေး စီမံခန့်ခွဲရန်နှင့် ကုမ္ပဏီ စည်းမျဉ်းများအတိုင်း ဝင်ရောက်စီမံရန်သာ ရည်ရွယ်သည်<br><br>
+"QR Code ထုတ်လုပ်ရန်" ခလုတ်နှိပ်ခြင်းဖြင့် သင်သည် PDPA ဥပဒေအရ နားလည်ပြီး ခွင့်ပြုချက်ပေးသည်`,
+    consent: "PDPA အရ လက်ခံပြီး ခွင့်ပြုချက်ပေး",
+    card_subtitle: "အခြေအနေ 3.2.2 - ပြင်ပနေထိုင်သူ",
     name_label: "အမည်",
     code_label: "နံပါတ်",
     dept_label: "ဌာန",
     company_label: "ကုမ္ပဏီ",
-    qr_title: "QR Code",
-    qr_hint: "လုံခြုံရေးထံပြပါ",
-    status_title: "✅ အသုံးပြုရန်အဆင်သင့်",
-    status_text: "မျက်နှာပြင်သိမ်း",
-    new_card: "ကတ်အသစ်",
-    screenshot: "မျက်နှာပြင်သိမ်း"
+    qr_title: "စစ်ဆေးရန် QR Code",
+    qr_hint: "လုံခြုံရေးဝန်ထမ်းထံ ပြပါ<br><strong>အချက်အလက်ပြည့်စုံသည်</strong>",
+    status_title: "✅ ကတ်အသုံးပြုရန်အဆင်သင့်",
+    status_text: "ပရင့်လုပ် သို့မဟုတ် မျက်နှာပြင်သိမ်းပါ",
+    new_card: "ကတ်အသစ်ဖန်တီး"
   },
   km: {
-    title: "ស្នើចេញក្រៅ",
-    subtitle: "ករណី 3.2.2",
-    name: "ឈ្មោះ",
-    code: "កូដ",
+    title: "ស្នើសុំចាប់អារម្មណ៍ចេញក្រៅតំបន់",
+    subtitle: "ករណី 3.2.2 - បុគ្គលិករស់នៅខាងក្រៅ",
+    name: "ឈ្មោះ-នាម",
+    code: "កូដបុគ្គលិក",
     company: "ក្រុមហ៊ុន",
     dept: "នាយកដ្ឋាន",
     photo: "រូបថត",
-    generate: "បង្កើត",
-    pdpa_title: "PDPA",
-    pdpa_text: `ក្រុមហ៊ុននឹងរក្សាទិន្នន័យសម្រាប់សុវត្ថិភាពតែប៉ុណ្ណោះ`,
-    consent: "PDPA យល់ព្រម",
-    card_subtitle: "ករណី 3.2.2",
+    generate: "បង្កើតកាត",
+    pdpa_title: "PDPA - គោលនយោបាយឯកជនភាព",
+    pdpa_text: `ក្រុមហ៊ុនក្នុងនាមជាអ្នកគ្រប់គ្រងទិន្នន័យផ្ទាល់ខ្លួន នឹងប្រមូល ប្រើប្រាស់ និងដំណើរការទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក រួមមាន ឈ្មោះ កូដបុគ្គលិក រូបថត<br>
+សម្រាប់គោលបំណងត្រួតពិនិត្យសិទ្ធិ គ្រប់គ្រងសុវត្ថិភាព និងគ្រប់គ្រងការចូល-ចេញតាមវិធានការក្រុមហ៊ុនតែប៉ុណ្ណោះ<br><br>
+ការចុចប៊ូតុង "បង្កើត QR Code" ត្រូវបានចាត់ទុកថាអ្នកបានអានយល់ដឹង និងយល់ព្រមតាមច្បាប់ការពារទិន្នន័យផ្ទាល់ខ្លួន ឆ្នាំ២០២២`,
+    consent: "ខ្ញុំយល់ព្រមនិងផ្តល់ការយល់ព្រមតាម PDPA",
+    card_subtitle: "ករណី 3.2.2 - បុគ្គលិករស់នៅខាងក្រៅ",
     name_label: "ឈ្មោះ",
     code_label: "កូដ",
     dept_label: "នាយកដ្ឋាន",
     company_label: "ក្រុមហ៊ុន",
-    qr_title: "QR Code",
-    qr_hint: "បង្ហាញដល់សុវត្ថិភាព",
-    status_title: "✅ រួចរាល់",
-    status_text: "រក្សាទុកអេក្រង់",
-    new_card: "បង្កើតថ្មី",
-    screenshot: "រក្សាទុកអេក្រង់"
+    qr_title: "QR Code សម្រាប់ត្រួតពិនិត្យ",
+    qr_hint: "បង្ហាញដល់មន្ត្រីសុវត្ថិភាព<br><strong>ព័ត៌មានពេញលេញនិរន្តរភាព</strong>",
+    status_title: "✅ កាតត្រៀមរួចសម្រាប់ប្រើប្រាស់",
+    status_text: "បោះពុម្ពឬរក្សាទុកអេក្រង់",
+    new_card: "បង្កើតកាតថ្មី"
   }
 };
 
@@ -710,25 +717,40 @@ const companies = [
 ];
 
 let currentLang = 'th';
-let employeeData = JSON.parse(localStorage.getItem('tegEmployeeData')) || [];
+let employeeData = []; // Local cache
 let isGuardMode = false;
 let video, canvas, ctx;
 let currentScannedKey = null;
-let isProcessing = false;
 
+// ========== Firebase Real-time Listener ==========
+database.ref('employees').on('value', (snapshot) => {
+  const data = snapshot.val();
+  employeeData = data ? Object.values(data) : [];
+  console.log('📊 Data synced:', employeeData.length, 'employees');
+  if (isGuardMode) loadReport();
+});
+
+// ========== Initialize ==========
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🔥 TEG 3.2.2 Loaded');
+  console.log('🔥 TEG Guard 3.2.2 Loaded with Firebase');
   setupLanguageSwitcher();
   setupGuardMode();
   showForm(document.getElementById('main-container'));
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const key = urlParams.get('key');
+  if (key && isGuardMode) {
+    showEmployeeByKey(key);
+  }
 });
 
+// ========== Language Switcher ==========
 function setupLanguageSwitcher() {
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
       currentLang = this.dataset.lang;
-      document.querySelector('.lang-btn.active')?.classList.remove('active');
+      document.querySelector('.lang-btn.active').classList.remove('active');
       this.classList.add('active');
       if (!isGuardMode) {
         showForm(document.getElementById('main-container'));
@@ -737,24 +759,25 @@ function setupLanguageSwitcher() {
   });
 }
 
+// ========== Guard Mode Setup ==========
 function setupGuardMode() {
   const guardBtn = document.getElementById('guardBtn');
   const modal = document.getElementById('guardModal');
   const cancelBtn = document.getElementById('cancelLogin');
   const loginBtn = document.getElementById('confirmLogin');
   
-  guardBtn?.addEventListener('click', (e) => {
+  guardBtn.addEventListener('click', (e) => {
     e.preventDefault();
     modal.style.display = 'flex';
   });
   
-  cancelBtn?.addEventListener('click', (e) => {
+  cancelBtn.addEventListener('click', (e) => {
     e.preventDefault();
     modal.style.display = 'none';
     document.getElementById('guardPassword').value = '';
   });
   
-  loginBtn?.addEventListener('click', (e) => {
+  loginBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const password = document.getElementById('guardPassword').value;
     if (password === 'Teg2025+') {
@@ -774,17 +797,18 @@ function setupGuardMode() {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
-      document.querySelector('.tab-btn.active')?.classList.remove('active');
+      document.querySelector('.tab-btn.active').classList.remove('active');
       this.classList.add('active');
       document.querySelectorAll('.scan-section, .report-section').forEach(sec => sec.classList.remove('active'));
-      document.getElementById(this.dataset.tab + 'Tab')?.classList.add('active');
+      document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
       if (this.dataset.tab === 'scan') initQRScanner();
       if (this.dataset.tab === 'report') loadReport();
     });
   });
   
-  document.getElementById('exportExcel')?.addEventListener('click', exportToExcel);
-  document.getElementById('qrImageInput')?.addEventListener('change', handleQrImageUpload);
+  document.getElementById('exportExcel').addEventListener('click', exportToExcel);
+  document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
+  document.getElementById('qrImageInput').addEventListener('change', handleQrImageUpload);
   
   document.addEventListener('click', function(e) {
     if (e.target.id === 'guardConfirmBtn') {
@@ -793,19 +817,20 @@ function setupGuardMode() {
   });
 }
 
+// ========== Show Form ==========
 function showForm(container) {
   const t = translations[currentLang];
   container.innerHTML = `
     <h1>${t.title}</h1>
-    <p style="text-align:center;color:#6b7280;font-size:0.85rem;margin-bottom:16px;">${t.subtitle}</p>
+    <p style="text-align:center;color:#6b7280;font-size:0.95rem;margin-bottom:24px;">${t.subtitle}</p>
     <form id="employeeForm" class="form-section">
       <div class="form-group">
         <label>${t.name} <span style="color:#ef4444;">*</span></label>
-        <input type="text" id="name1" required placeholder="${t.name}">
+        <input type="text" id="name1" required placeholder="กรุณากรอกชื่อ-นามสกุล">
       </div>
       <div class="form-group">
         <label>${t.code} <span style="color:#ef4444;">*</span></label>
-        <input type="text" id="code1" required placeholder="${t.code}">
+        <input type="text" id="code1" required placeholder="กรุณากรอกรหัสพนักงาน">
       </div>
       <div class="form-group">
         <label>${t.company} <span style="color:#ef4444;">*</span></label>
@@ -816,7 +841,7 @@ function showForm(container) {
       </div>
       <div class="form-group">
         <label>${t.dept} <span style="color:#ef4444;">*</span></label>
-        <input type="text" id="dept1" required placeholder="${t.dept}">
+        <input type="text" id="dept1" required placeholder="กรุณากรอกแผนก">
       </div>
       <div class="pdpa-notice">
         <h4>${t.pdpa_title}</h4>
@@ -828,10 +853,10 @@ function showForm(container) {
       </div>
       <div class="form-group">
         <label>${t.photo} <span style="color:#ef4444;">*</span></label>
-        <input type="file" id="photo1" accept="image/*" required>
+        <input type="file" id="photo1" accept="image/*" capture="environment" required>
         <img id="preview1" style="display:none;">
       </div>
-      <button type="button" class="main-button generate-button" id="generateBtn" disabled>
+      <button type="submit" class="main-button generate-button" id="generateBtn" disabled>
         📱 ${t.generate}
       </button>
     </form>
@@ -840,135 +865,108 @@ function showForm(container) {
   setupFormEvents();
 }
 
+// ========== Form Events ==========
 function setupFormEvents() {
   const photoInput = document.getElementById('photo1');
   const preview = document.getElementById('preview1');
+  const form = document.getElementById('employeeForm');
   const generateBtn = document.getElementById('generateBtn');
   
   function checkFormReady() {
     try {
-      const name = document.getElementById('name1')?.value.trim();
-      const code = document.getElementById('code1')?.value.trim();
-      const company = document.getElementById('company1')?.value;
-      const dept = document.getElementById('dept1')?.value.trim();
-      const pdpa = document.getElementById('pdpa-consent')?.checked;
-      const photo = photoInput?.files && photoInput.files.length > 0;
+      const name = document.getElementById('name1').value.trim();
+      const code = document.getElementById('code1').value.trim();
+      const company = document.getElementById('company1').value;
+      const dept = document.getElementById('dept1').value.trim();
+      const pdpa = document.getElementById('pdpa-consent').checked;
+      const photo = photoInput.files && photoInput.files.length > 0;
       
       const isReady = name && code && company && dept && pdpa && photo;
-      if (generateBtn) {
-        generateBtn.disabled = !isReady;
-        generateBtn.textContent = isReady ? '✅ สร้างบัตรพนักงาน' : '📱 สร้างบัตรพนักงาน';
-      }
+      generateBtn.disabled = !isReady;
+      generateBtn.textContent = isReady ? '✅ สร้างบัตรพนักงาน' : '📱 สร้างบัตรพนักงาน';
     } catch(e) {
-      console.error('Form check:', e);
+      console.error('Form check error:', e);
     }
   }
   
-  if (photoInput) {
-    photoInput.addEventListener('change', function(e) {
-      console.log('📸 Photo selected');
-      const file = e.target.files[0];
-      if (file) {
-        if (file.size > 3 * 1024 * 1024) {
-          alert('⚠️ รูปใหญ่เกิน 3MB');
-          photoInput.value = '';
-          checkFormReady();
-          return;
-        }
-        
-        const reader = new FileReader();
-        const timeoutId = setTimeout(() => {
-          reader.abort();
-          alert('❌ อ่านรูปล้มเหลว');
-          photoInput.value = '';
-          preview.style.display = 'none';
-          checkFormReady();
-        }, 10000);
-        
-        reader.onload = function(e2) {
-          clearTimeout(timeoutId);
-          preview.src = e2.target.result;
-          preview.style.display = 'block';
-          console.log('✅ Photo OK');
-          checkFormReady();
-        };
-        
-        reader.onerror = function() {
-          clearTimeout(timeoutId);
-          alert('❌ ไม่สามารถอ่านรูป');
-          photoInput.value = '';
-          preview.style.display = 'none';
-          checkFormReady();
-        };
-        
-        reader.readAsDataURL(file);
-      } else {
-        preview.style.display = 'none';
-        checkFormReady();
+  photoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('⚠️ รูปใหญ่เกินไป (สูงสุด 5MB)');
+        photoInput.value = '';
+        return;
       }
-    });
-  }
-  
-  ['name1', 'code1', 'dept1'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', checkFormReady);
+      
+      const reader = new FileReader();
+      reader.onload = function(e2) {
+        preview.src = e2.target.result;
+        preview.style.display = 'block';
+        checkFormReady();
+      };
+      reader.onerror = function() {
+        alert('❌ ไม่สามารถอ่านรูปได้');
+        photoInput.value = '';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.style.display = 'none';
+      checkFormReady();
+    }
   });
   
-  document.getElementById('company1')?.addEventListener('change', checkFormReady);
-  document.getElementById('pdpa-consent')?.addEventListener('change', checkFormReady);
+  ['name1', 'code1', 'dept1'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener('input', checkFormReady);
+      input.addEventListener('change', checkFormReady);
+    }
+  });
   
-  if (generateBtn) {
-    generateBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (!this.disabled && !isProcessing) {
-        createProfessionalCard();
-      }
-    });
-  }
+  const companySelect = document.getElementById('company1');
+  if (companySelect) companySelect.addEventListener('change', checkFormReady);
+  
+  const pdpaCheckbox = document.getElementById('pdpa-consent');
+  if (pdpaCheckbox) pdpaCheckbox.addEventListener('change', checkFormReady);
+  
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    createProfessionalCard();
+  });
+  
+  generateBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!this.disabled) {
+      createProfessionalCard();
+    }
+  });
   
   checkFormReady();
 }
 
+// ========== Create Card (Firebase) ==========
 function createProfessionalCard() {
-  if (isProcessing) {
-    console.log('⚠️ Processing...');
-    return;
-  }
-  
-  isProcessing = true;
-  
   try {
-    const name = document.getElementById('name1')?.value.trim();
-    const code = document.getElementById('code1')?.value.trim();
-    const company = document.getElementById('company1')?.value;
-    const dept = document.getElementById('dept1')?.value.trim();
-    const file = document.getElementById('photo1')?.files[0];
+    const name = document.getElementById('name1').value.trim();
+    const code = document.getElementById('code1').value.trim();
+    const company = document.getElementById('company1').value;
+    const dept = document.getElementById('dept1').value.trim();
+    const file = document.getElementById('photo1').files[0];
     const t = translations[currentLang];
     
     if (!file) {
-      alert('❌ กรุณาเลือกรูป');
-      isProcessing = false;
+      alert('❌ กรุณาเลือกรูปถ่าย');
       return;
     }
     
     const generateBtn = document.getElementById('generateBtn');
-    if (generateBtn) {
-      generateBtn.disabled = true;
-      generateBtn.textContent = '⏳ กำลังสร้าง...';
-    }
+    generateBtn.disabled = true;
+    generateBtn.textContent = '⏳ กำลังสร้าง...';
     
     const reader = new FileReader();
-    const timeoutId = setTimeout(() => {
-      reader.abort();
-      alert('❌ สร้างบัตรล้มเหลว');
-      if (generateBtn) {
-        generateBtn.disabled = false;
-        generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
-      }
-      isProcessing = false;
-    }, 15000);
-    
     reader.onload = function(e) {
-      clearTimeout(timeoutId);
       const photoData = e.target.result;
       const key = 'EMP_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       const employee = {
@@ -978,48 +976,42 @@ function createProfessionalCard() {
         scanLogs: []
       };
       
-      employeeData.unshift(employee);
-      try {
-        localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
-      } catch(err) {
-        console.error('Storage full:', err);
-        alert('⚠️ พื้นที่เต็ม กรุณาลบข้อมูลเก่า');
-      }
-      
-      console.log('✅ Card created:', key);
-      isProcessing = false;
-      showEmployeeCard(name, code, company, dept, photoData, key, t);
+      // บันทึกลง Firebase
+      database.ref('employees/' + key).set(employee)
+        .then(() => {
+          console.log('✅ Saved to Firebase:', key);
+          showEmployeeCard(name, code, company, dept, photoData, key, t);
+        })
+        .catch(err => {
+          alert('❌ บันทึกไม่สำเร็จ: ' + err.message);
+          generateBtn.disabled = false;
+          generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
+        });
     };
-    
     reader.onerror = function() {
-      clearTimeout(timeoutId);
-      alert('❌ ไม่สามารถอ่านรูป');
-      if (generateBtn) {
-        generateBtn.disabled = false;
-        generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
-      }
-      isProcessing = false;
+      alert('❌ ไม่สามารถอ่านรูปได้');
+      generateBtn.disabled = false;
+      generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
     };
-    
     reader.readAsDataURL(file);
   } catch(e) {
-    console.error('Error:', e);
-    alert('❌ เกิดข้อผิดพลาด');
-    isProcessing = false;
+    console.error('Create card error:', e);
+    alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
   }
 }
 
+// ========== Show Employee Card ==========
 function showEmployeeCard(name, code, company, dept, photoData, key, t) {
   const container = document.getElementById('main-container');
   container.innerHTML = `
-    <div class="card-section" id="card-capture">
+    <div class="card-section">
       <div class="employee-card">
         <div class="card-header">
           <h3 class="card-company">${company}</h3>
           <p class="card-subtitle">${t.card_subtitle}</p>
         </div>
         <div class="card-body">
-          <img src="${photoData}" class="card-photo" alt="photo">
+          <img src="${photoData}" class="card-photo" alt="รูปพนักงาน" loading="lazy">
           <div class="card-details">
             <div class="detail-row">
               <span class="detail-label">${t.name_label}</span>
@@ -1049,82 +1041,56 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
         <h3>${t.status_title}</h3>
         <p>${t.status_text}</p>
       </div>
+      <button class="main-button" onclick="location.reload()" style="background:#6b7280;color:white;">
+        🔄 ${t.new_card}
+      </button>
     </div>
-    <button class="main-button screenshot-btn" id="screenshotBtn">
-      📸 ${t.screenshot}
-    </button>
-    <button class="main-button" onclick="location.reload()" style="background:#6b7280;color:white;margin-top:10px;">
-      🔄 ${t.new_card}
-    </button>
   `;
   
   setTimeout(() => {
     try {
-      const qrCanvas = document.getElementById('qr-canvas');
-      if (qrCanvas) {
+      const canvas = document.getElementById('qr-canvas');
+      if (canvas) {
         const qrUrl = `${window.location.origin}${window.location.pathname}?key=${key}`;
-        new QRious({ element: qrCanvas, value: qrUrl, size: 200, level: 'H' });
-        console.log('✅ QR OK');
+        new QRious({ 
+          element: canvas, 
+          value: qrUrl, 
+          size: 240, 
+          level: 'H' 
+        });
+        console.log('✅ QR Generated:', qrUrl);
       }
     } catch(e) {
       console.error('QR Error:', e);
     }
   }, 200);
-  
-  document.getElementById('screenshotBtn')?.addEventListener('click', async function() {
-    try {
-      this.disabled = true;
-      this.textContent = '⏳ กำลังบันทึก...';
-      
-      const captureElement = document.getElementById('card-capture');
-      const canvas = await html2canvas(captureElement, {
-        backgroundColor: null,
-        scale: 2,
-        logging: false
-      });
-      
-      canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `TEG_Card_${code}_${Date.now()}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-        
-        this.disabled = false;
-        this.textContent = '✅ บันทึกสำเร็จ';
-        setTimeout(() => {
-          this.textContent = `📸 ${t.screenshot}`;
-        }, 2000);
-      });
-    } catch(e) {
-      console.error('Screenshot error:', e);
-      alert('❌ บันทึกหน้าจอล้มเหลว');
-      this.disabled = false;
-      this.textContent = `📸 ${t.screenshot}`;
-    }
-  });
 }
 
+// ========== QR Scanner ==========
 function initQRScanner() {
-  if (video?.srcObject) return;
+  if (video && video.srcObject) return;
   
   video = document.getElementById('video');
   canvas = document.getElementById('canvas');
-  ctx = canvas?.getContext('2d');
+  ctx = canvas.getContext('2d');
   
   navigator.mediaDevices.getUserMedia({ 
-    video: { facingMode: 'environment', width: 1280, height: 720 } 
+    video: { 
+      facingMode: 'environment',
+      width: { ideal: 1280 },
+      height: { ideal: 720 }
+    } 
   })
   .then(stream => {
     video.srcObject = stream;
+    video.setAttribute('playsinline', true);
     video.play();
     requestAnimationFrame(tick);
   })
   .catch(err => {
-    console.error('Camera:', err);
+    console.error('Camera error:', err);
     document.getElementById('scanTab').innerHTML += 
-      '<p style="color:red;text-align:center;padding:16px;">📱 ไม่สามารถเปิดกล้อง</p>';
+      '<p style="color:red;text-align:center;padding:20px;">📱 ไม่สามารถเปิดกล้องได้<br>กรุณาให้สิทธิ์การใช้งานกล้อง</p>';
   });
 }
 
@@ -1141,11 +1107,11 @@ function tick() {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const code = jsQR(imageData.data, imageData.width, imageData.height);
   
-  if (code?.data.includes('?key=')) {
+  if (code && code.data.includes('?key=')) {
     const url = new URL(code.data);
     const key = url.searchParams.get('key');
     if (key) {
-      console.log('🔍 QR:', key);
+      console.log('🔍 QR Scanned:', key);
       showEmployeeByKey(key);
       return;
     }
@@ -1164,20 +1130,20 @@ function handleQrImageUpload(e) {
     img.onload = function() {
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
       
-      if (code?.data.includes('?key=')) {
+      if (code && code.data.includes('?key=')) {
         const url = new URL(code.data);
         const key = url.searchParams.get('key');
         if (key) {
           showEmployeeByKey(key);
         } else {
-          alert('❌ ไม่พบ key');
+          alert('❌ ไม่พบ key ใน QR นี้');
         }
       } else {
-        alert('❌ อ่าน QR ล้มเหลว');
+        alert('❌ อ่าน QR จากรูปไม่สำเร็จ');
       }
     };
     img.src = ev.target.result;
@@ -1185,22 +1151,28 @@ function handleQrImageUpload(e) {
   reader.readAsDataURL(file);
 }
 
+// ========== Show Employee By Key (Firebase) ==========
 function showEmployeeByKey(key) {
   const emp = employeeData.find(e => e.key === key);
   if (!emp) { 
-    alert('❌ ไม่พบข้อมูล');
+    alert('❌ ไม่พบข้อมูลพนักงานในระบบ');
     return; 
   }
+  
+  currentScannedKey = key;
   
   const scanLog = {
     scanTime: new Date().toISOString(),
     scanDate: new Date().toLocaleDateString('th-TH'),
     scanTimeLocal: new Date().toLocaleString('th-TH')
   };
-  if (!emp.scanLogs) emp.scanLogs = [];
-  emp.scanLogs.unshift(scanLog);
   
-  currentScannedKey = key;
+  // อัพเดท scanLogs ลง Firebase
+  database.ref('employees/' + key + '/scanLogs').transaction((logs) => {
+    if (!logs) logs = [];
+    logs.unshift(scanLog);
+    return logs.slice(0, 50); // เก็บแค่ 50 log ล่าสุด
+  });
   
   document.getElementById('scan-photo').src = emp.photoData;
   document.getElementById('scan-name').textContent = emp.name;
@@ -1212,18 +1184,12 @@ function showEmployeeByKey(key) {
     ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-';
     
   document.getElementById('scan-result').style.display = 'block';
-  localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
 }
 
+// ========== Guard Confirm (Firebase) ==========
 function guardConfirmAction() {
   if (!currentScannedKey) { 
-    alert('❌ ยังไม่มีข้อมูล');
-    return; 
-  }
-  
-  const index = employeeData.findIndex(e => e.key === currentScannedKey);
-  if (index === -1) { 
-    alert('❌ ไม่พบข้อมูล');
+    alert('❌ ยังไม่มีข้อมูลจาก QR');
     return; 
   }
   
@@ -1235,83 +1201,82 @@ function guardConfirmAction() {
     guardConfirmed: true
   };
   
-  employeeData[index].scanLogs.unshift(confirmLog);
-  employeeData[index].guardConfirmTime = now;
+  // อัพเดท Firebase
+  const updates = {};
+  updates[`employees/${currentScannedKey}/guardConfirmTime`] = now;
+  updates[`employees/${currentScannedKey}/scanLogs`] = firebase.database.ServerValue.increment(0);
   
-  localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
-  document.getElementById('scan-guard-time').textContent = new Date(now).toLocaleString('th-TH');
-  
-  alert('✅ บันทึกสำเร็จ');
-  loadReport();
-  document.getElementById('scan-result').style.display = 'none';
-  currentScannedKey = null;
+  database.ref('employees/' + currentScannedKey).transaction((emp) => {
+    if (emp) {
+      if (!emp.scanLogs) emp.scanLogs = [];
+      emp.scanLogs.unshift(confirmLog);
+      emp.guardConfirmTime = now;
+    }
+    return emp;
+  }).then(() => {
+    alert('✅ บันทึกเวลายืนยันเรียบร้อย!\n📊 อัพเดทรายงานแล้ว');
+    document.getElementById('scan-result').style.display = 'none';
+    currentScannedKey = null;
+  });
 }
 
-// 🔥 รายงาน - แสดงเวลาสแกนทุกครั้ง
+// ========== Load Report ==========
 function loadReport() {
   const tbody = document.querySelector('#reportTable tbody');
   if (!tbody) return;
   
   tbody.innerHTML = '';
   employeeData.slice(0, 100).forEach(emp => {
-    const totalScans = emp.scanLogs?.length || 0;
     const tr = document.createElement('tr');
-    
-    // สร้าง HTML สำหรับประวัติสแกน
-    let scanHistoryHTML = '<div class="scan-history">';
-    if (totalScans > 0) {
-      emp.scanLogs.slice(0, 20).forEach(log => {
-        const isConfirmed = log.guardConfirmed || false;
-        scanHistoryHTML += `
-          <div class="scan-item ${isConfirmed ? 'confirmed' : ''}">
-            <span class="scan-time">${log.scanTimeLocal}</span>
-            ${isConfirmed ? '<span class="scan-badge">✓ ยืนยัน</span>' : ''}
-          </div>
-        `;
-      });
-      if (totalScans > 20) {
-        scanHistoryHTML += `<div style="text-align:center;padding:4px;color:#6b7280;font-size:0.65rem;">...และอีก ${totalScans - 20} ครั้ง</div>`;
-      }
-    } else {
-      scanHistoryHTML += '<div style="text-align:center;color:#9ca3af;padding:8px;">ยังไม่มีการสแกน</div>';
-    }
-    scanHistoryHTML += '</div>';
-    
     tr.innerHTML = `
-      <td class="photo-cell"><img src="${emp.photoData}" alt=""></td>
+      <td class="photo-cell"><img src="${emp.photoData}" alt="" loading="lazy"></td>
       <td>${emp.name}</td>
       <td>${emp.code}</td>
-      <td>${emp.company.substring(0,18)}...</td>
-      <td>${emp.dept.substring(0,12)}...</td>
+      <td>${emp.company.substring(0,20)}${emp.company.length > 20 ? '...' : ''}</td>
+      <td>${emp.dept.substring(0,15)}${emp.dept.length > 15 ? '...' : ''}</td>
       <td>${new Date(emp.timestamp).toLocaleString('th-TH')}</td>
       <td>${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}</td>
-      <td>
-        <span class="total-scans">${totalScans} ครั้ง</span>
-        ${scanHistoryHTML}
-      </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
+// ========== Export Excel ==========
 function exportToExcel() {
-  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,เวลาสร้างบัตร,รปภ.ยืนยันล่าสุด,จำนวนสแกนทั้งหมด,ประวัติสแกน (20 ครั้งล่าสุด)\n';
+  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,สร้างบัตร,รปภ.ยืนยัน,สแกนทั้งหมด\n';
   employeeData.forEach(emp => {
     const totalScans = emp.scanLogs?.length || 0;
-    const scanDetails = emp.scanLogs?.slice(0,20).map((log, idx) => 
-      `${idx+1}. ${log.scanTimeLocal}${log.guardConfirmed ? ' ✓ยืนยัน' : ''}`
-    ).join(' | ') || 'ยังไม่มีการสแกน';
-    
-    csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}","${totalScans}","${scanDetails}"\n`;
+    const scanDetails = emp.scanLogs?.slice(0,5).map(log => 
+      `${log.scanTimeLocal}${log.guardConfirmed ? ' (ยืนยัน)' : ''}`
+    ).join('; ') || '';
+    csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : ''}","${totalScans} (${scanDetails})"\n`;
   });
   
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `TEG_Report_${new Date().toISOString().split('T')[0]}.csv`;
+  link.download = `TEG_322_Report_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
 }
 
+// ========== Clear All Data (Firebase) ==========
+function clearAllData() {
+  if (!confirm('⚠️ ลบข้อมูลทั้งหมดใช่หรือไม่?\n\nข้อมูลจะถูกลบถาวร ไม่สามารถกู้คืนได้')) return;
+  
+  database.ref('employees').remove()
+    .then(() => {
+      alert('✅ ลบข้อมูลเรียบร้อยแล้ว');
+      employeeData = [];
+      loadReport();
+    })
+    .catch(err => {
+      alert('❌ ลบไม่สำเร็จ: ' + err.message);
+    });
+}
+
+// PWA Support
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
