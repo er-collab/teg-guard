@@ -819,10 +819,10 @@ function showForm(container) {
       </div>
       <div class="form-group">
         <label>${t.photo} <span style="color:#ef4444;">*</span></label>
-        <input type="file" id="photo1" accept="image/*" capture="environment" required>
+        <input type="file" id="photo1" accept="image/*" required>
         <img id="preview1" style="display:none;">
       </div>
-      <button type="submit" class="main-button generate-button" id="generateBtn" disabled>
+      <button type="button" class="main-button generate-button" id="generateBtn" disabled>
         📱 ${t.generate}
       </button>
     </form>
@@ -857,14 +857,16 @@ function setupFormEvents() {
     }
   }
   
-  // Photo preview
+  // 🔥 แก้ไข: Photo preview - ลบ capture attribute และเพิ่ม error handling
   photoInput.addEventListener('change', function(e) {
+    console.log('Photo input change triggered');
     const file = e.target.files[0];
     if (file) {
       // ตรวจสอบขนาดไฟล์ (สูงสุด 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('⚠️ รูปใหญ่เกินไป (สูงสุด 5MB)');
         photoInput.value = '';
+        checkFormReady();
         return;
       }
       
@@ -872,17 +874,26 @@ function setupFormEvents() {
       reader.onload = function(e2) {
         preview.src = e2.target.result;
         preview.style.display = 'block';
+        console.log('Photo loaded successfully');
         checkFormReady();
       };
       reader.onerror = function() {
         alert('❌ ไม่สามารถอ่านรูปได้');
         photoInput.value = '';
+        checkFormReady();
       };
       reader.readAsDataURL(file);
     } else {
       preview.style.display = 'none';
       checkFormReady();
     }
+  });
+  
+  // 🔥 เพิ่ม: Mobile-specific event listener
+  photoInput.addEventListener('click', function(e) {
+    console.log('Photo input clicked');
+    // รีเซ็ต value เพื่อให้สามารถเลือกไฟล์เดิมซ้ำได้
+    this.value = '';
   });
   
   // Input events
@@ -904,18 +915,21 @@ function setupFormEvents() {
     pdpaCheckbox.addEventListener('change', checkFormReady);
   }
   
-  // 🔥 ปุ่ม Submit - แก้ปัญหา Mobile Touch
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    createProfessionalCard();
-  });
-  
-  // ปุ่มกดตรงๆ (backup สำหรับ mobile)
-  generateBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  // 🔥 แก้ไข: ปุ่ม Submit - ใช้ touchstart และ click
+  generateBtn.addEventListener('touchstart', function(e) {
+    console.log('Generate button touchstart');
     if (!this.disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      createProfessionalCard();
+    }
+  }, { passive: false });
+  
+  generateBtn.addEventListener('click', function(e) {
+    console.log('Generate button click');
+    if (!this.disabled) {
+      e.preventDefault();
+      e.stopPropagation();
       createProfessionalCard();
     }
   });
@@ -926,6 +940,7 @@ function setupFormEvents() {
 
 function createProfessionalCard() {
   try {
+    console.log('🔥 Creating professional card...');
     const name = document.getElementById('name1').value.trim();
     const code = document.getElementById('code1').value.trim();
     const company = document.getElementById('company1').value;
@@ -944,6 +959,7 @@ function createProfessionalCard() {
     
     const reader = new FileReader();
     reader.onload = function(e) {
+      console.log('✅ Photo data loaded');
       const photoData = e.target.result;
       const key = 'EMP_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       const employee = {
@@ -960,6 +976,7 @@ function createProfessionalCard() {
       showEmployeeCard(name, code, company, dept, photoData, key, t);
     };
     reader.onerror = function() {
+      console.error('❌ FileReader error');
       alert('❌ ไม่สามารถอ่านรูปได้');
       generateBtn.disabled = false;
       generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
@@ -968,6 +985,11 @@ function createProfessionalCard() {
   } catch(e) {
     console.error('Create card error:', e);
     alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
+    const generateBtn = document.getElementById('generateBtn');
+    if (generateBtn) {
+      generateBtn.disabled = false;
+      generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
+    }
   }
 }
 
@@ -1232,4 +1254,3 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
-
