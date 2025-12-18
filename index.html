@@ -163,7 +163,6 @@ input[type="file"]::file-selector-button {
   display: none;
 }
 
-/* 🔥 บัตรพนักงาน - Fit One Screen */
 .employee-card {
   background: rgba(255, 255, 255, 0.98);
   border-radius: 16px;
@@ -260,7 +259,6 @@ input[type="file"]::file-selector-button {
 .status-info h3 { color: #166534; font-size: 1rem; margin: 0 0 6px 0; }
 .status-info p { color: #047857; margin: 0; font-size: 0.85rem; }
 
-/* 🔥 ปุ่มบันทึกหน้าจอ */
 .screenshot-btn {
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
@@ -417,7 +415,7 @@ input[type="file"]::file-selector-button {
   cursor: pointer;
 }
 
-/* 🔥 รายงาน Responsive */
+/* 🔥 รายงาน - แสดงเวลาสแกนทุกครั้ง */
 .report-container {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -426,7 +424,7 @@ input[type="file"]::file-selector-button {
 .report-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   background: white;
   border-radius: 10px;
   overflow: hidden;
@@ -438,11 +436,14 @@ input[type="file"]::file-selector-button {
   padding: 10px 6px;
   font-weight: 600;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 .report-table td { 
   padding: 8px 6px; 
   border-bottom: 1px solid #e5e7eb;
-  word-break: break-word;
+  vertical-align: top;
 }
 .report-table tr:hover { background: #f8fafc; }
 .photo-cell { width: 50px; text-align: center; }
@@ -453,21 +454,67 @@ input[type="file"]::file-selector-button {
   border-radius: 5px;
 }
 
+/* 🔥 ประวัติสแกน */
+.scan-history {
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 4px;
+  background: #f9fafb;
+  border-radius: 6px;
+  font-size: 0.7rem;
+}
+.scan-item {
+  padding: 4px 6px;
+  margin-bottom: 3px;
+  background: white;
+  border-radius: 4px;
+  border-left: 3px solid #3b82f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.scan-item.confirmed {
+  border-left-color: #10b981;
+  background: #ecfdf5;
+}
+.scan-time {
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+}
+.scan-badge {
+  background: #10b981;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   .report-table {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
   .report-table th, .report-table td {
     padding: 6px 4px;
+  }
+  .scan-history {
+    max-height: 120px;
+    font-size: 0.65rem;
   }
 }
 
 @media (min-width: 1024px) {
   .guard-panel {
-    max-width: 1200px;
+    max-width: 1400px;
   }
   .report-table {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+  .scan-history {
+    max-height: 200px;
+    font-size: 0.75rem;
   }
 }
 
@@ -481,6 +528,16 @@ input[type="file"]::file-selector-button {
   font-weight: 600;
   cursor: pointer;
   margin-top: 14px;
+}
+
+.total-scans {
+  display: inline-block;
+  background: #3b82f6;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 </style>
 </head>
@@ -551,9 +608,9 @@ input[type="file"]::file-selector-button {
             <th>รหัส</th>
             <th>บริษัท</th>
             <th>แผนก</th>
-            <th>เวลาแจ้งออก</th>
+            <th>เวลาสร้างบัตร</th>
             <th>รปภ.ยืนยัน</th>
-            <th>สแกน</th>
+            <th style="min-width:200px;">ประวัติสแกน (เวลา)</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -642,18 +699,14 @@ const translations = {
 };
 
 const companies = [
-  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQR)",
+  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQO)",
   "บริษัท ไทยอีสเทิร์น อินโนเวชั่น จำกัด (TEI)",
   "บริษัท ไทยอีสเทิร์น รับเบอร์ จำกัด (TER)",
   "บริษัท อีสเทิร์น ปาล์ม ออยล์ จำกัด (EPO)",
   "บริษัท ไทยอีสเทิร์น ท้อปซีดส์ ออยล์ จำกัด (TETSO)",
   "บริษัท ไทยอีสเทิร์น ไบโอ พาวเวอร์ จำกัด (มหาชน) (TEBP)",
   "บริษัท ไทยอีสเทิร์น โลจิสติกส์ จำกัด (TEL)",
-  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)",
-  "บริษัท ไทยอีสเทิร์น ยูทิลิตี้ส์ จำกัด (TEU)",
-  "บริษัท ไทยอีสเทิร์น พรอพเพอร์ตี้ แมเนจเม้นท์ จำกัด (TEPM)",
-  "บริษัท ไทยอีสเทิร์น แพลนเทชั่น จำกัด (TEP)",
-  "บริษัท ทีอีจีเอ โฮลดิ้งส์ จำกัด (TEGAH)"
+  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)"
 ];
 
 let currentLang = 'th';
@@ -1018,7 +1071,6 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
     }
   }, 200);
   
-  // 🔥 Screenshot function
   document.getElementById('screenshotBtn')?.addEventListener('click', async function() {
     try {
       this.disabled = true;
@@ -1195,6 +1247,7 @@ function guardConfirmAction() {
   currentScannedKey = null;
 }
 
+// 🔥 รายงาน - แสดงเวลาสแกนทุกครั้ง
 function loadReport() {
   const tbody = document.querySelector('#reportTable tbody');
   if (!tbody) return;
@@ -1203,6 +1256,27 @@ function loadReport() {
   employeeData.slice(0, 100).forEach(emp => {
     const totalScans = emp.scanLogs?.length || 0;
     const tr = document.createElement('tr');
+    
+    // สร้าง HTML สำหรับประวัติสแกน
+    let scanHistoryHTML = '<div class="scan-history">';
+    if (totalScans > 0) {
+      emp.scanLogs.slice(0, 20).forEach(log => {
+        const isConfirmed = log.guardConfirmed || false;
+        scanHistoryHTML += `
+          <div class="scan-item ${isConfirmed ? 'confirmed' : ''}">
+            <span class="scan-time">${log.scanTimeLocal}</span>
+            ${isConfirmed ? '<span class="scan-badge">✓ ยืนยัน</span>' : ''}
+          </div>
+        `;
+      });
+      if (totalScans > 20) {
+        scanHistoryHTML += `<div style="text-align:center;padding:4px;color:#6b7280;font-size:0.65rem;">...และอีก ${totalScans - 20} ครั้ง</div>`;
+      }
+    } else {
+      scanHistoryHTML += '<div style="text-align:center;color:#9ca3af;padding:8px;">ยังไม่มีการสแกน</div>';
+    }
+    scanHistoryHTML += '</div>';
+    
     tr.innerHTML = `
       <td class="photo-cell"><img src="${emp.photoData}" alt=""></td>
       <td>${emp.name}</td>
@@ -1211,19 +1285,23 @@ function loadReport() {
       <td>${emp.dept.substring(0,12)}...</td>
       <td>${new Date(emp.timestamp).toLocaleString('th-TH')}</td>
       <td>${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}</td>
-      <td><strong>${totalScans}</strong></td>
+      <td>
+        <span class="total-scans">${totalScans} ครั้ง</span>
+        ${scanHistoryHTML}
+      </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
 function exportToExcel() {
-  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,สร้างบัตร,รปภ.ยืนยัน,จำนวนสแกน,รายละเอียดสแกน\n';
+  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,เวลาสร้างบัตร,รปภ.ยืนยันล่าสุด,จำนวนสแกนทั้งหมด,ประวัติสแกน (20 ครั้งล่าสุด)\n';
   employeeData.forEach(emp => {
     const totalScans = emp.scanLogs?.length || 0;
-    const scanDetails = emp.scanLogs?.slice(0,10).map(log => 
-      `${log.scanTimeLocal}${log.guardConfirmed ? ' (✅)' : ''}`
-    ).join(' | ') || '';
+    const scanDetails = emp.scanLogs?.slice(0,20).map((log, idx) => 
+      `${idx+1}. ${log.scanTimeLocal}${log.guardConfirmed ? ' ✓ยืนยัน' : ''}`
+    ).join(' | ') || 'ยังไม่มีการสแกน';
+    
     csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}","${totalScans}","${scanDetails}"\n`;
   });
   
