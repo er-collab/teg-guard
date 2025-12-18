@@ -323,21 +323,23 @@ input[type="file"]::file-selector-button:active {
   font-size: 0.85rem; 
 }
 
-/* ปุ่มใหม่ - ปุ่มเดียว */
-.card-buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.card-buttons .main-button {
-  flex: 1;
-  padding: 12px;
-  font-size: 0.95rem;
-}
-
+/* ปุ่มสร้างใหม่ */
 .reload-btn {
+  width: 100%;
+  padding: 14px;
   background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 12px;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+.reload-btn:active {
+  transform: translateY(1px);
 }
 
 @media (max-width: 480px) {
@@ -721,7 +723,7 @@ const translations = {
     qr_title: "QR Code สำหรับการตรวจสอบ",
     qr_hint: "แสดงต่อเจ้าหน้าที่รักษาความปลอดภัย<br><strong>ข้อมูลครบถ้วนถาวร</strong>",
     status_title: "✅ บัตรพร้อมใช้งาน",
-    status_text: "Screenshot หน้าจอนี้เพื่อแสดงต่อ รปภ.",
+    status_text: "แคปหน้าจอเพื่อแสดงต่อ รปภ.",
     new_card: "สร้างบัตรใหม่"
   },
   mm: {
@@ -746,7 +748,7 @@ const translations = {
     qr_title: "စစ်ဆေးရန် QR Code",
     qr_hint: "လုံခြုံရေးဝန်ထမ်းထံ ပြပါ<br><strong>အချက်အလက်ပြည့်စုံသည်</strong>",
     status_title: "✅ ကတ်အသုံးပြုရန်အဆင်သင့်",
-    status_text: "မျက်နှာပြင် Screenshot သိမ်းပါ",
+    status_text: "Screenshot ယူပါ",
     new_card: "ကတ်အသစ်ဖန်တီး"
   },
   km: {
@@ -771,7 +773,7 @@ const translations = {
     qr_title: "QR Code សម្រាប់ត្រួតពិនិត្យ",
     qr_hint: "បង្ហាញដល់មន្ត្រីសុវត្ថិភាព<br><strong>ព័ត៌មានពេញលេញនិរន្តរភាព</strong>",
     status_title: "✅ កាតត្រៀមរួចសម្រាប់ប្រើប្រាស់",
-    status_text: "Screenshot អេក្រង់នេះ",
+    status_text: "ថតអេក្រង់",
     new_card: "បង្កើតកាតថ្មី"
   }
 };
@@ -1078,7 +1080,7 @@ function createProfessionalCard() {
 function showEmployeeCard(name, code, company, dept, photoData, key, t) {
   const container = document.getElementById('main-container');
   container.innerHTML = `
-    <div class="card-section" id="card-section-capture">
+    <div class="card-section">
       <div class="employee-card">
         <div class="card-header">
           <h3 class="card-company">${company}</h3>
@@ -1115,11 +1117,9 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
         <h3>${t.status_title}</h3>
         <p>${t.status_text}</p>
       </div>
-      <div class="card-buttons">
-        <button class="main-button reload-btn" onclick="location.reload()">
-          🔄 ${t.new_card}
-        </button>
-      </div>
+      <button class="reload-btn" onclick="location.reload()">
+        🔄 ${t.new_card}
+      </button>
     </div>
   `;
   
