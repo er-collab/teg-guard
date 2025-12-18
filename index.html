@@ -323,7 +323,7 @@ input[type="file"]::file-selector-button:active {
   font-size: 0.85rem; 
 }
 
-/* ปุ่มใหม่ - แนวนอน 2 ปุ่ม */
+/* ปุ่มใหม่ - ปุ่มเดียว */
 .card-buttons {
   display: flex;
   gap: 8px;
@@ -334,10 +334,6 @@ input[type="file"]::file-selector-button:active {
   flex: 1;
   padding: 12px;
   font-size: 0.95rem;
-}
-
-.screenshot-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
 }
 
 .reload-btn {
@@ -725,9 +721,8 @@ const translations = {
     qr_title: "QR Code สำหรับการตรวจสอบ",
     qr_hint: "แสดงต่อเจ้าหน้าที่รักษาความปลอดภัย<br><strong>ข้อมูลครบถ้วนถาวร</strong>",
     status_title: "✅ บัตรพร้อมใช้งาน",
-    status_text: "พิมพ์หรือบันทึกหน้าจอเพื่อแสดงต่อ รปภ.",
-    new_card: "สร้างบัตรใหม่",
-    save_screenshot: "บันทึกภาพ"
+    status_text: "Screenshot หน้าจอนี้เพื่อแสดงต่อ รปภ.",
+    new_card: "สร้างบัตรใหม่"
   },
   mm: {
     title: "စက်ရုံပြင်ပ ထွက်ခွင့်တောင်း",
@@ -751,9 +746,8 @@ const translations = {
     qr_title: "စစ်ဆေးရန် QR Code",
     qr_hint: "လုံခြုံရေးဝန်ထမ်းထံ ပြပါ<br><strong>အချက်အလက်ပြည့်စုံသည်</strong>",
     status_title: "✅ ကတ်အသုံးပြုရန်အဆင်သင့်",
-    status_text: "ပရင့်လုပ် သို့မဟုတ် မျက်နှာပြင်သိမ်းပါ",
-    new_card: "ကတ်အသစ်ဖန်တီး",
-    save_screenshot: "ဓာပုံသိမ်း"
+    status_text: "မျက်နှာပြင် Screenshot သိမ်းပါ",
+    new_card: "ကတ်အသစ်ဖန်တီး"
   },
   km: {
     title: "ស្នើសុំចាប់អារម្មណ៍ចេញក្រៅតំបន់",
@@ -777,9 +771,8 @@ const translations = {
     qr_title: "QR Code សម្រាប់ត្រួតពិនិត្យ",
     qr_hint: "បង្ហាញដល់មន្ត្រីសុវត្ថិភាព<br><strong>ព័ត៌មានពេញលេញនិរន្តរភាព</strong>",
     status_title: "✅ កាតត្រៀមរួចសម្រាប់ប្រើប្រាស់",
-    status_text: "បោះពុម្ពឬរក្សាទុកអេក្រង់",
-    new_card: "បង្កើតកាតថ្មី",
-    save_screenshot: "រក្សាទុករូបភាព"
+    status_text: "Screenshot អេក្រង់នេះ",
+    new_card: "បង្កើតកាតថ្មី"
   }
 };
 
@@ -1123,9 +1116,6 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
         <p>${t.status_text}</p>
       </div>
       <div class="card-buttons">
-        <button class="main-button screenshot-btn" onclick="captureCard()">
-          📸 ${t.save_screenshot}
-        </button>
         <button class="main-button reload-btn" onclick="location.reload()">
           🔄 ${t.new_card}
         </button>
@@ -1354,109 +1344,6 @@ function clearAllData() {
     .catch(err => {
       alert('❌ ลบไม่สำเร็จ: ' + err.message);
     });
-}
-
-// ========== Capture Screenshot (Modal สวย) ==========
-function captureCard() {
-  // แจ้งให้ใช้ Screenshot ของระบบ
-  const msg = document.createElement('div');
-  msg.style.cssText = `
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-    padding: 30px 40px;
-    border-radius: 16px;
-    font-weight: 600;
-    z-index: 9999;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    text-align: center;
-    max-width: 90%;
-    line-height: 1.6;
-    font-family: 'Sarabun', sans-serif;
-  `;
-  
-  // ตรวจสอบว่าเป็น iOS, Android หรือ Desktop
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isAndroid = /Android/.test(navigator.userAgent);
-  
-  if (isIOS) {
-    msg.innerHTML = `
-      📸 <strong>วิธีบันทึกภาพหน้าจอ (iPhone/iPad)</strong><br>
-      <div style="margin-top:16px;font-size:1.1rem;background:rgba(255,255,255,0.2);padding:12px;border-radius:8px;">
-        กด <strong>ปุ่ม Power + ปุ่ม Volume Up</strong><br>
-        พร้อมกัน
-      </div>
-      <div style="margin-top:12px;font-size:0.9rem;opacity:0.9;">
-        (หรือ Power + Home สำหรับรุ่นเก่า)
-      </div>
-    `;
-  } else if (isAndroid) {
-    msg.innerHTML = `
-      📸 <strong>วิธีบันทึกภาพหน้าจอ (Android)</strong><br>
-      <div style="margin-top:16px;font-size:1.1rem;background:rgba(255,255,255,0.2);padding:12px;border-radius:8px;">
-        กด <strong>ปุ่ม Power + ปุ่ม Volume Down</strong><br>
-        พร้อมกัน
-      </div>
-      <div style="margin-top:12px;font-size:0.9rem;opacity:0.9;">
-        (บางรุ่นกด Power ค้าง แล้วเลือก Screenshot)
-      </div>
-    `;
-  } else {
-    msg.innerHTML = `
-      📸 <strong>วิธีบันทึกภาพหน้าจอ (Computer)</strong><br>
-      <div style="margin-top:16px;font-size:1.1rem;background:rgba(255,255,255,0.2);padding:12px;border-radius:8px;">
-        <strong>Windows:</strong> กด Windows + PrtScn<br>
-        <strong>Mac:</strong> กด Cmd + Shift + 3
-      </div>
-      <div style="margin-top:12px;font-size:0.9rem;opacity:0.9;">
-        หรือคลิกขวา > Save Image As...
-      </div>
-    `;
-  }
-  
-  document.body.appendChild(msg);
-  
-  // ปิดอัตโนมัติใน 5 วินาที
-  setTimeout(() => {
-    if (document.body.contains(msg)) {
-      msg.style.opacity = '0';
-      msg.style.transition = 'opacity 0.3s ease';
-      setTimeout(() => {
-        if (document.body.contains(msg)) {
-          document.body.removeChild(msg);
-        }
-      }, 300);
-    }
-  }, 5000);
-  
-  // เพิ่มปุ่มปิด
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = '✕ ปิด';
-  closeBtn.style.cssText = `
-    margin-top: 20px;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    border: 2px solid rgba(255,255,255,0.3);
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-family: 'Sarabun', sans-serif;
-  `;
-  closeBtn.onclick = () => {
-    msg.style.opacity = '0';
-    msg.style.transition = 'opacity 0.3s ease';
-    setTimeout(() => {
-      if (document.body.contains(msg)) {
-        document.body.removeChild(msg);
-      }
-    }, 300);
-  };
-  msg.appendChild(closeBtn);
 }
 
 // PWA Support
