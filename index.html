@@ -13,8 +13,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <!-- อ่าน QR จากกล้อง/รูป -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<!-- Screenshot Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
@@ -1358,69 +1356,107 @@ function clearAllData() {
     });
 }
 
-// ========== Capture Screenshot (Download Only) ==========
+// ========== Capture Screenshot (Modal สวย) ==========
 function captureCard() {
-  const container = document.getElementById('card-section-capture');
+  // แจ้งให้ใช้ Screenshot ของระบบ
+  const msg = document.createElement('div');
+  msg.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 30px 40px;
+    border-radius: 16px;
+    font-weight: 600;
+    z-index: 9999;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    text-align: center;
+    max-width: 90%;
+    line-height: 1.6;
+    font-family: 'Sarabun', sans-serif;
+  `;
   
-  if (!container) {
-    alert('❌ ไม่พบข้อมูลบัตร');
-    return;
+  // ตรวจสอบว่าเป็น iOS, Android หรือ Desktop
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+  
+  if (isIOS) {
+    msg.innerHTML = `
+      📸 <strong>วิธีบันทึกภาพหน้าจอ (iPhone/iPad)</strong><br>
+      <div style="margin-top:16px;font-size:1.1rem;background:rgba(255,255,255,0.2);padding:12px;border-radius:8px;">
+        กด <strong>ปุ่ม Power + ปุ่ม Volume Up</strong><br>
+        พร้อมกัน
+      </div>
+      <div style="margin-top:12px;font-size:0.9rem;opacity:0.9;">
+        (หรือ Power + Home สำหรับรุ่นเก่า)
+      </div>
+    `;
+  } else if (isAndroid) {
+    msg.innerHTML = `
+      📸 <strong>วิธีบันทึกภาพหน้าจอ (Android)</strong><br>
+      <div style="margin-top:16px;font-size:1.1rem;background:rgba(255,255,255,0.2);padding:12px;border-radius:8px;">
+        กด <strong>ปุ่ม Power + ปุ่ม Volume Down</strong><br>
+        พร้อมกัน
+      </div>
+      <div style="margin-top:12px;font-size:0.9rem;opacity:0.9;">
+        (บางรุ่นกด Power ค้าง แล้วเลือก Screenshot)
+      </div>
+    `;
+  } else {
+    msg.innerHTML = `
+      📸 <strong>วิธีบันทึกภาพหน้าจอ (Computer)</strong><br>
+      <div style="margin-top:16px;font-size:1.1rem;background:rgba(255,255,255,0.2);padding:12px;border-radius:8px;">
+        <strong>Windows:</strong> กด Windows + PrtScn<br>
+        <strong>Mac:</strong> กด Cmd + Shift + 3
+      </div>
+      <div style="margin-top:12px;font-size:0.9rem;opacity:0.9;">
+        หรือคลิกขวา > Save Image As...
+      </div>
+    `;
   }
-
-  // แสดงข้อความกำลังประมวลผล
-  const loadingMsg = document.createElement('div');
-  loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(59,130,246,0.95);color:white;padding:20px 30px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-  loadingMsg.innerHTML = '⏳ กำลังบันทึกภาพ...';
-  document.body.appendChild(loadingMsg);
-
-  try {
-    html2canvas(container, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      logging: false,
-      useCORS: true,
-      allowTaint: true,
-      scrollY: -window.scrollY,
-      scrollX: -window.scrollX,
-      width: container.offsetWidth,
-      height: container.offsetHeight
-    }).then(canvas => {
-      // ดาวน์โหลดรูปเลย
-      const link = document.createElement('a');
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-      link.download = `TEG-Card-${timestamp}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // ลบข้อความกำลังประมวลผล
-      document.body.removeChild(loadingMsg);
-      
-      // แสดงข้อความสำเร็จ
-      const successMsg = document.createElement('div');
-      successMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#10b981;color:white;padding:20px 30px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);font-size:1.1rem;text-align:center;';
-      successMsg.innerHTML = '✅ บันทึกภาพสำเร็จ!<br><span style="font-size:0.9rem;opacity:0.9;">ตรวจสอบโฟลเดอร์ดาวน์โหลด</span>';
-      document.body.appendChild(successMsg);
-      
+  
+  document.body.appendChild(msg);
+  
+  // ปิดอัตโนมัติใน 5 วินาที
+  setTimeout(() => {
+    if (document.body.contains(msg)) {
+      msg.style.opacity = '0';
+      msg.style.transition = 'opacity 0.3s ease';
       setTimeout(() => {
-        if (document.body.contains(successMsg)) {
-          document.body.removeChild(successMsg);
+        if (document.body.contains(msg)) {
+          document.body.removeChild(msg);
         }
-      }, 3000);
-      
-    }).catch(err => {
-      console.error('Screenshot error:', err);
-      document.body.removeChild(loadingMsg);
-      alert('❌ ไม่สามารถบันทึกภาพได้\n\nกรุณาลองใหม่อีกครั้ง หรือใช้ Screenshot จากอุปกรณ์:\n• Android: Power + Volume Down\n• iPhone: Power + Home (หรือ Power + Volume Up)');
-    });
-  } catch(e) {
-    console.error('Capture error:', e);
-    if (document.body.contains(loadingMsg)) {
-      document.body.removeChild(loadingMsg);
+      }, 300);
     }
-    alert('⚠️ ไม่สามารถจับภาพได้\nกรุณาใช้ Screenshot จากอุปกรณ์');
-  }
+  }, 5000);
+  
+  // เพิ่มปุ่มปิด
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = '✕ ปิด';
+  closeBtn.style.cssText = `
+    margin-top: 20px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: 'Sarabun', sans-serif;
+  `;
+  closeBtn.onclick = () => {
+    msg.style.opacity = '0';
+    msg.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+      if (document.body.contains(msg)) {
+        document.body.removeChild(msg);
+      }
+    }, 300);
+  };
+  msg.appendChild(closeBtn);
 }
 
 // PWA Support
