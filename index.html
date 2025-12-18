@@ -543,7 +543,7 @@ input[type="file"]::file-selector-button:active {
   gap: 12px;
   font-size: 0.95rem;
 }
-.detail-label { font-weight: 600; color: #047857; }
+.detail-grid .detail-label { font-weight: 600; color: #047857; }
 
 .guard-confirm-btn {
   margin-top: 14px;
@@ -786,14 +786,18 @@ const translations = {
 };
 
 const companies = [
-  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQO)",
+  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQR)",
   "บริษัท ไทยอีสเทิร์น อินโนเวชั่น จำกัด (TEI)",
   "บริษัท ไทยอีสเทิร์น รับเบอร์ จำกัด (TER)",
   "บริษัท อีสเทิร์น ปาล์ม ออยล์ จำกัด (EPO)",
   "บริษัท ไทยอีสเทิร์น ท้อปซีดส์ ออยล์ จำกัด (TETSO)",
   "บริษัท ไทยอีสเทิร์น ไบโอ พาวเวอร์ จำกัด (มหาชน) (TEBP)",
   "บริษัท ไทยอีสเทิร์น โลจิสติกส์ จำกัด (TEL)",
-  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)"
+  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)",
+  "บริษัท ไทยอีสเทิร์น ยูทิลิตี้ส์ จำกัด (TEU)",
+  "บริษัท ไทยอีสเทิร์น พรอพเพอร์ตี้ แมเนจเม้นท์ จำกัด (TEPM)",
+  "บริษัท ไทยอีสเทิร์น แพลนเทชั่น จำกัด (TEP)",
+  "บริษัท ทีอีจีเอ โฮลดิ้งส์ จำกัด (TEGAH)"
 ];
 
 let currentLang = 'th';
@@ -1354,7 +1358,7 @@ function clearAllData() {
     });
 }
 
-// ========== Capture Screenshot ==========
+// ========== Capture Screenshot (Download Only) ==========
 function captureCard() {
   const container = document.getElementById('card-section-capture');
   
@@ -1362,6 +1366,12 @@ function captureCard() {
     alert('❌ ไม่พบข้อมูลบัตร');
     return;
   }
+
+  // แสดงข้อความกำลังประมวลผล
+  const loadingMsg = document.createElement('div');
+  loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(59,130,246,0.95);color:white;padding:20px 30px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+  loadingMsg.innerHTML = '⏳ กำลังบันทึกภาพ...';
+  document.body.appendChild(loadingMsg);
 
   try {
     html2canvas(container, {
@@ -1371,53 +1381,46 @@ function captureCard() {
       useCORS: true,
       allowTaint: true,
       scrollY: -window.scrollY,
-      scrollX: -window.scrollX
+      scrollX: -window.scrollX,
+      width: container.offsetWidth,
+      height: container.offsetHeight
     }).then(canvas => {
-      // ลองใช้ share API ก่อน (สำหรับ mobile)
-      if (navigator.share && navigator.canShare) {
-        canvas.toBlob(blob => {
-          const file = new File([blob], 'TEG-Card.png', { type: 'image/png' });
-          if (navigator.canShare({ files: [file] })) {
-            navigator.share({
-              files: [file],
-              title: 'บัตรพนักงาน TEG',
-              text: 'บัตรพนักงานภายนอก TEG 3.2.2'
-            }).catch(err => {
-              console.log('Share cancelled:', err);
-              downloadCanvas(canvas);
-            });
-          } else {
-            downloadCanvas(canvas);
-          }
-        });
-      } else {
-        // Desktop: ดาวน์โหลดตรงๆ
-        downloadCanvas(canvas);
-      }
+      // ดาวน์โหลดรูปเลย
+      const link = document.createElement('a');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      link.download = `TEG-Card-${timestamp}.png`;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // ลบข้อความกำลังประมวลผล
+      document.body.removeChild(loadingMsg);
+      
+      // แสดงข้อความสำเร็จ
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#10b981;color:white;padding:20px 30px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);font-size:1.1rem;text-align:center;';
+      successMsg.innerHTML = '✅ บันทึกภาพสำเร็จ!<br><span style="font-size:0.9rem;opacity:0.9;">ตรวจสอบโฟลเดอร์ดาวน์โหลด</span>';
+      document.body.appendChild(successMsg);
+      
+      setTimeout(() => {
+        if (document.body.contains(successMsg)) {
+          document.body.removeChild(successMsg);
+        }
+      }, 3000);
+      
     }).catch(err => {
       console.error('Screenshot error:', err);
-      alert('⚠️ กรุณากด Screenshot จากอุปกรณ์ของคุณ\n(Power + Volume Down บน Android\nหรือ Power + Home บน iPhone)');
+      document.body.removeChild(loadingMsg);
+      alert('❌ ไม่สามารถบันทึกภาพได้\n\nกรุณาลองใหม่อีกครั้ง หรือใช้ Screenshot จากอุปกรณ์:\n• Android: Power + Volume Down\n• iPhone: Power + Home (หรือ Power + Volume Up)');
     });
   } catch(e) {
     console.error('Capture error:', e);
-    alert('⚠️ ไม่สามารถจับภาพได้ กรุณาใช้ Screenshot จากอุปกรณ์');
+    if (document.body.contains(loadingMsg)) {
+      document.body.removeChild(loadingMsg);
+    }
+    alert('⚠️ ไม่สามารถจับภาพได้\nกรุณาใช้ Screenshot จากอุปกรณ์');
   }
-}
-
-function downloadCanvas(canvas) {
-  const link = document.createElement('a');
-  link.download = `TEG-Card-${Date.now()}.png`;
-  link.href = canvas.toDataURL('image/png');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  // แสดงข้อความแจ้งเตือน
-  const msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#10b981;color:white;padding:20px 30px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-  msg.textContent = '✅ บันทึกภาพสำเร็จ!';
-  document.body.appendChild(msg);
-  setTimeout(() => document.body.removeChild(msg), 2000);
 }
 
 // PWA Support
