@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>TEG 3.2.2 - บัตรพนักงานภายนอก</title>
 
-<!-- สร้าง QR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-<!-- อ่าน QR จากกล้อง/รูป -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
@@ -22,7 +21,7 @@ body {
   background-position: center;
   background-attachment: fixed;
   min-height: 100vh;
-  padding: 15px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,24 +30,23 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ปุ่มเปลี่ยนภาษา */
 .lang-switcher {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   z-index: 1000;
 }
 .lang-btn {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(255,255,255,0.9);
   color: #374151;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
@@ -61,260 +59,231 @@ body {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border-color: #3b82f6;
-  box-shadow: 0 4px 15px rgba(59,130,246,0.3);
 }
-.lang-btn:active { transform: scale(0.95); }
 
 .container {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 24px;
-  padding: 28px 24px;
+  border-radius: 20px;
+  padding: 20px 16px;
   width: 100%;
   max-width: 420px;
-  max-height: 95vh;
+  max-height: 92vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   position: relative;
-  margin-top: 80px;
+  margin-top: 70px;
 }
 
 h1 {
   text-align: center;
   color: #1a1a1a;
   font-weight: 600;
-  font-size: clamp(1.4rem, 4vw, 1.6rem);
-  margin: 0 0 20px 0;
-  letter-spacing: 0.5px;
+  font-size: clamp(1.2rem, 4vw, 1.4rem);
+  margin: 0 0 12px 0;
 }
 
-.form-section, .card-section { display: flex; flex-direction: column; gap: 20px; }
+.form-section, .card-section { display: flex; flex-direction: column; gap: 16px; }
 
-.form-group { display: flex; flex-direction: column; gap: 8px; }
-label { font-weight: 500; color: #374151; font-size: 0.95rem; letter-spacing: 0.3px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+label { font-weight: 500; color: #374151; font-size: 0.9rem; }
 select, input[type="text"], input[type="file"] {
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.8);
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #1f2937;
-  font-weight: 400;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
 }
-select option { font-family: inherit; }
 input:focus, select:focus {
   outline: none;
   border-color: #3b82f6;
-  background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-input[type="file"] {
-  padding: 12px;
 }
 input[type="file"]::file-selector-button {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  margin-right: 12px;
-  transition: all 0.2s;
-}
-input[type="file"]::file-selector-button:active {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  transform: translateY(-1px);
+  margin-right: 10px;
 }
 
 .pdpa-notice {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
   border: 1px solid #f59e0b;
-  border-radius: 12px;
-  padding: 16px;
-  margin: 20px 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.8rem;
+  line-height: 1.4;
   color: #92400e;
 }
-.pdpa-notice h4 { color: #b45309; margin: 0 0 8px 0; font-weight: 600; font-size: 0.95rem; }
+.pdpa-notice h4 { color: #b45309; margin: 0 0 6px 0; font-size: 0.9rem; }
 .pdpa-checkbox {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  margin-top: 12px;
-}
-.pdpa-checkbox input[type="checkbox"] {
-  width: auto;
-  margin: 2px 0 0 0;
-  transform: scale(1.2);
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .main-button {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.5px;
   touch-action: manipulation;
 }
 .generate-button {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-}
-.generate-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
-}
-.generate-button:active:not(:disabled) {
-  transform: translateY(0);
 }
 .generate-button:disabled {
   background: #9ca3af;
   cursor: not-allowed;
-  transform: none;
 }
 
 #preview1 {
-  width: 100px;
-  height: 130px;
+  width: 80px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 2px solid #e5e7eb;
-  margin-top: 8px;
+  margin-top: 6px;
   display: none;
 }
 
+/* 🔥 บัตรพนักงาน - Fit One Screen */
 .employee-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 16px;
   padding: 0;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  backdrop-filter: blur(10px);
 }
 
 .card-header {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  padding: 24px 28px 20px;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  padding: 16px 20px;
   text-align: center;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 .card-company {
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #1e293b;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
 }
 .card-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #64748b;
-  font-weight: 400;
   margin: 0;
 }
 
 .card-body {
-  padding: 28px;
+  padding: 16px;
   display: flex;
-  gap: 20px;
+  gap: 14px;
 }
 .card-photo {
-  width: 100px;
-  height: 130px;
-  border-radius: 14px;
+  width: 80px;
+  height: 100px;
+  border-radius: 10px;
   object-fit: cover;
   flex-shrink: 0;
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 .card-details {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
-.detail-row { display: flex; align-items: flex-start; gap: 12px; }
+.detail-row { display: flex; align-items: flex-start; gap: 8px; }
 .detail-label {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #374151;
-  min-width: 55px;
+  min-width: 50px;
   flex-shrink: 0;
 }
 .detail-value {
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #1f2937;
   flex: 1;
 }
 
 .qr-container {
-  margin-top: 24px;
-  padding: 24px;
+  margin-top: 16px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 20px;
+  border-radius: 14px;
   border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 .qr-title {
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: #1f2937;
-  margin-bottom: 16px;
-  letter-spacing: 0.3px;
+  margin-bottom: 12px;
 }
 #qr-canvas {
-  width: 240px;
-  height: 240px;
-  border: 3px solid #f3f4f6;
-  border-radius: 16px;
+  width: 200px;
+  height: 200px;
+  border: 2px solid #f3f4f6;
+  border-radius: 12px;
   background: white;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
-  margin: 0 auto 16px;
+  margin: 0 auto 10px;
 }
-.qr-hint { font-size: 0.9rem; color: #6b7280; line-height: 1.5; }
+.qr-hint { font-size: 0.8rem; color: #6b7280; line-height: 1.3; }
 
 .status-info {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
   border: 1px solid #a7f3d0;
-  border-radius: 12px;
-  padding: 16px;
-  margin-top: 20px;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 14px;
   text-align: center;
 }
-.status-info h3 { color: #166534; font-size: 1.1rem; font-weight: 600; margin: 0 0 8px 0; }
-.status-info p { color: #047857; margin: 0; font-size: 0.95rem; }
+.status-info h3 { color: #166534; font-size: 1rem; margin: 0 0 6px 0; }
+.status-info p { color: #047857; margin: 0; font-size: 0.85rem; }
 
-@media (max-width: 480px) {
-  .container { padding: 20px 16px; margin-top: 100px; }
-  .card-body { flex-direction: column; gap: 16px; }
-  .card-photo { width: 100%; height: 120px; align-self: center; }
-  #qr-canvas { width: 220px; height: 220px; }
+/* 🔥 ปุ่มบันทึกหน้าจอ */
+.screenshot-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  margin-top: 10px;
 }
 
-/* ===== ปุ่มเฟือง รปภ. มุมล่างขวา ===== */
+@media (max-width: 480px) {
+  .container { padding: 16px 12px; margin-top: 80px; }
+  .card-body { flex-direction: column; align-items: center; }
+  .card-photo { width: 100px; height: 130px; }
+  #qr-canvas { width: 180px; height: 180px; }
+}
+
+/* รปภ. */
 .guard-settings {
   position: fixed;
-  bottom: 25px;
-  right: 25px;
+  bottom: 20px;
+  right: 20px;
   z-index: 1000;
 }
 .guard-btn {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   border: 3px solid rgba(255,255,255,0.4);
   background: rgba(255,255,255,0.98);
@@ -322,30 +291,16 @@ input[type="file"]::file-selector-button:active {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  backdrop-filter: blur(15px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   transition: all 0.3s ease;
-  animation: pulse 2s infinite;
   touch-action: manipulation;
 }
-.guard-btn:active {
-  transform: scale(0.95) rotate(10deg);
-  background: white;
-  box-shadow: 0 12px 35px rgba(59,130,246,0.4);
-}
 .guard-btn svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   fill: #ef4444;
-  stroke: #dc2626;
-  stroke-width: 1.5;
-}
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-  50% { box-shadow: 0 8px 35px rgba(239,68,68,0.4); }
 }
 
-/* Modal login รปภ. */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -358,57 +313,54 @@ input[type="file"]::file-selector-button:active {
 }
 .modal {
   background: white;
-  border-radius: 20px;
-  padding: 24px;
+  border-radius: 18px;
+  padding: 20px;
   width: 90%;
-  max-width: 380px;
+  max-width: 360px;
   box-shadow: 0 25px 70px rgba(0,0,0,0.4);
 }
-.modal h2 { margin: 0 0 12px 0; font-size: 1.2rem; color: #111; text-align: center; }
-.modal p { margin: 0 0 12px 0; font-size: 0.9rem; color: #4b5563; text-align: center; }
+.modal h2 { margin: 0 0 10px 0; font-size: 1.1rem; text-align: center; }
 .modal input {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 1rem;
-  margin-bottom: 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 14px;
 }
-.modal input:focus { border-color: #3b82f6; outline: none; }
-.modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
+.modal-buttons { display: flex; gap: 10px; }
 .btn-small {
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 11px;
+  border-radius: 10px;
   border: none;
   font-weight: 500;
   cursor: pointer;
-  touch-action: manipulation;
 }
 .btn-cancel { background: #f3f4f6; color: #374151; }
 .btn-login { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
 
-/* แผง รปภ. */
 .guard-panel {
   display: none;
   background: rgba(255,255,255,0.95);
-  border-radius: 20px;
-  padding: 20px;
-  margin-top: 20px;
+  border-radius: 18px;
+  padding: 16px;
+  margin-top: 80px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  max-height: 80vh;
+  max-width: 95%;
+  width: 100%;
+  max-height: 85vh;
   overflow-y: auto;
 }
-.guard-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.guard-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
 .tab-btn {
   flex: 1;
-  padding: 12px;
+  padding: 10px;
   border: 2px solid #e5e7eb;
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 500;
-  touch-action: manipulation;
 }
 .tab-btn.active {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
@@ -421,106 +373,119 @@ input[type="file"]::file-selector-button:active {
 
 #video {
   width: 100%;
-  height: 260px;
+  height: 220px;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #f9fafb;
 }
 #canvas { display: none; }
 
-.scan-controls {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.scan-controls label {
-  font-size: 0.85rem;
-  color: #4b5563;
-}
-
 .employee-detail {
   background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 16px;
   border: 1px solid #a7f3d0;
-  margin-top: 16px;
+  margin-top: 14px;
 }
 .employee-photo {
-  width: 100px;
-  height: 130px;
+  width: 90px;
+  height: 120px;
   object-fit: cover;
-  border-radius: 12px;
-  margin: 0 auto 16px;
+  border-radius: 10px;
+  margin: 0 auto 12px;
   display: block;
   border: 3px solid white;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 12px;
-  font-size: 0.95rem;
+  gap: 10px;
+  font-size: 0.9rem;
 }
 .detail-label { font-weight: 600; color: #047857; }
 
 .guard-confirm-btn {
-  margin-top: 14px;
+  margin-top: 12px;
   width: 100%;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 11px;
+  border-radius: 10px;
   border: none;
   background: linear-gradient(135deg, #f97316, #ea580c);
   color: white;
   font-weight: 600;
   cursor: pointer;
-  touch-action: manipulation;
 }
 
-/* รายงาน */
+/* 🔥 รายงาน Responsive */
+.report-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .report-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 .report-table th {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
-  padding: 12px 8px;
+  padding: 10px 6px;
   font-weight: 600;
+  white-space: nowrap;
 }
-.report-table td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; }
+.report-table td { 
+  padding: 8px 6px; 
+  border-bottom: 1px solid #e5e7eb;
+  word-break: break-word;
+}
 .report-table tr:hover { background: #f8fafc; }
-.photo-cell { width: 60px; text-align: center; }
+.photo-cell { width: 50px; text-align: center; }
 .photo-cell img {
-  width: 40px;
-  height: 50px;
+  width: 35px;
+  height: 45px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .report-table {
+    font-size: 0.7rem;
+  }
+  .report-table th, .report-table td {
+    padding: 6px 4px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .guard-panel {
+    max-width: 1200px;
+  }
+  .report-table {
+    font-size: 0.9rem;
+  }
 }
 
 .export-btn {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
-  margin-top: 16px;
-  touch-action: manipulation;
+  margin-top: 14px;
 }
 </style>
 </head>
 <body>
 
-<!-- ปุ่มเฟือง รปภ. มุมล่างขวา -->
 <div class="guard-settings">
   <button class="guard-btn" id="guardBtn" title="โหมด รปภ.">
     <svg viewBox="0 0 24 24">
@@ -529,18 +494,16 @@ input[type="file"]::file-selector-button:active {
   </button>
 </div>
 
-<!-- ปุ่มภาษา -->
 <div class="lang-switcher">
   <button class="lang-btn active" data-lang="th">ไทย</button>
   <button class="lang-btn" data-lang="mm">မြန်မာ</button>
   <button class="lang-btn" data-lang="km">ខ្មែរ</button>
 </div>
 
-<!-- Modal login รปภ. -->
 <div class="modal-backdrop" id="guardModal">
   <div class="modal">
     <h2>🔐 เข้าโหมด รปภ.</h2>
-    <p>กรุณากรอกรหัสผ่าน</p>
+    <p style="text-align:center;color:#6b7280;font-size:0.85rem;margin:0 0 10px 0;">กรุณากรอกรหัสผ่าน</p>
     <input type="password" id="guardPassword" placeholder="********">
     <div class="modal-buttons">
       <button class="btn-small btn-cancel" id="cancelLogin">ยกเลิก</button>
@@ -549,7 +512,6 @@ input[type="file"]::file-selector-button:active {
   </div>
 </div>
 
-<!-- แผง รปภ. -->
 <div class="guard-panel" id="guardPanel">
   <div class="guard-tabs">
     <button class="tab-btn active" data-tab="scan">สแกน QR</button>
@@ -559,10 +521,10 @@ input[type="file"]::file-selector-button:active {
   <div class="scan-section active" id="scanTab">
     <video id="video" autoplay muted playsinline></video>
     <canvas id="canvas"></canvas>
-    <div class="scan-controls">
-      <label>
-        หรืออัปโหลดรูป QR จากอัลบั้ม:
-        <input type="file" id="qrImageInput" accept="image/*">
+    <div style="margin-top:8px;">
+      <label style="font-size:0.8rem;color:#4b5563;">
+        หรืออัปโหลดรูป QR:
+        <input type="file" id="qrImageInput" accept="image/*" style="margin-top:6px;padding:8px;font-size:0.8rem;">
       </label>
     </div>
     <div id="scan-result" class="employee-detail" style="display:none;">
@@ -580,25 +542,27 @@ input[type="file"]::file-selector-button:active {
   </div>
 
   <div class="report-section" id="reportTab">
-    <table class="report-table" id="reportTable">
-      <thead>
-        <tr>
-          <th>รูป</th>
-          <th>ชื่อ</th>
-          <th>รหัส</th>
-          <th>บริษัท</th>
-          <th>แผนก</th>
-          <th>เวลาแจ้งออก</th>
-          <th>เวลารปภ.ยืนยัน</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="report-container">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>รูป</th>
+            <th>ชื่อ</th>
+            <th>รหัส</th>
+            <th>บริษัท</th>
+            <th>แผนก</th>
+            <th>เวลาแจ้งออก</th>
+            <th>รปภ.ยืนยัน</th>
+            <th>สแกน</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <button class="export-btn" id="exportExcel">📊 ดาวน์โหลด Excel</button>
   </div>
 </div>
 
-<!-- Main พนักงาน -->
 <div class="container" id="main-container"></div>
 
 <script>
@@ -613,82 +577,83 @@ const translations = {
     photo: "รูปถ่ายพนักงาน",
     generate: "สร้างบัตรพนักงาน",
     pdpa_title: "PDPA - นโยบายความเป็นส่วนตัว",
-    pdpa_text: `บริษัทในฐานะผู้ควบคุมข้อมูลส่วนบุคคล จะเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลของท่าน ได้แก่ ชื่อ–สกุล รหัสพนักงาน รูปถ่าย<br>
-เพื่อวัตถุประสงค์ในการตรวจสอบสิทธิ์ ดูแลความปลอดภัย และบริหารจัดการการเข้า–ออกตามมาตรการของบริษัทเท่านั้น<br><br>
-การกดปุ่ม "สร้าง QR Code" ถือว่าท่านได้อ่าน รับทราบ และ ให้ความยินยอม ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562`,
-    consent: "ฉันยอมรับและให้ความยินยอมตาม PDPA",
+    pdpa_text: `บริษัทจะเก็บข้อมูล ชื่อ รหัส รูปถ่าย เพื่อความปลอดภัยและบริหารจัดการเข้า-ออกเท่านั้น การกด "สร้างบัตร" = ยินยอมตาม พ.ร.บ.คุ้มครองข้อมูล`,
+    consent: "ฉันยอมรับตาม PDPA",
     card_subtitle: "กรณี 3.2.2 - พนักงานพักอาศัยภายนอก",
     name_label: "ชื่อ",
     code_label: "รหัส",
     dept_label: "แผนก",
     company_label: "บริษัท",
-    qr_title: "QR Code สำหรับการตรวจสอบ",
-    qr_hint: "แสดงต่อเจ้าหน้าที่รักษาความปลอดภัย<br><strong>ข้อมูลครบถ้วนถาวร</strong>",
+    qr_title: "QR Code",
+    qr_hint: "แสดงต่อรปภ.",
     status_title: "✅ บัตรพร้อมใช้งาน",
-    status_text: "พิมพ์หรือบันทึกหน้าจอเพื่อแสดงต่อ รปภ.",
-    new_card: "สร้างบัตรใหม่"
+    status_text: "บันทึกหน้าจอหรือพิมพ์",
+    new_card: "สร้างบัตรใหม่",
+    screenshot: "บันทึกหน้าจอ"
   },
   mm: {
-    title: "စက်ရုံပြင်ပ ထွက်ခွင့်တောင်း",
-    subtitle: "အခြေအနေ 3.2.2 - ပြင်ပနေထိုင်သူ ဝန်ထမ်း",
+    title: "စက်ရုံပြင်ပ ထွက်ခွင့်",
+    subtitle: "အခြေအနေ 3.2.2",
     name: "အမည်",
-    code: "ဝန်ထမ်းနံပါတ်",
+    code: "နံပါတ်",
     company: "ကုမ္ပဏီ",
     dept: "ဌာန",
     photo: "ဓာပုံ",
     generate: "ကတ်ဖန်တီး",
-    pdpa_title: "PDPA - ပုဂ္ဂလ်ရေးကိုယ်ရေးအချက်အလက်",
-    pdpa_text: `ကုမ္ပဏီသည် ကိုယ်ရေးအချက်အလက်ထိန်းချုပ်သူအဖြစ် သင်၏ ကိုယ်ရေးအချက်အလက်များကို စုဆောင်း၊ အသုံးပြု၊ လုပ်ဆောင်မည် အမည်၊ ဝန်ထမ်းနံပါတ်၊ ဓာပုံ<br>
-သင့်ခွင့်ပြုချက်စစ်ဆေး၊ လုံခြုံရေး စီမံခန့်ခွဲရန်နှင့် ကုမ္ပဏီ စည်းမျဉ်းများအတိုင်း ဝင်ရောက်စီမံရန်သာ ရည်ရွယ်သည်<br><br>
-"QR Code ထုတ်လုပ်ရန်" ခလုတ်နှိပ်ခြင်းဖြင့် သင်သည် PDPA ဥပဒေအရ နားလည်ပြီး ခွင့်ပြုချက်ပေးသည်`,
-    consent: "PDPA အရ လက်ခံပြီး ခွင့်ပြုချက်ပေး",
-    card_subtitle: "အခြေအနေ 3.2.2 - ပြင်ပနေထိုင်သူ",
+    pdpa_title: "PDPA",
+    pdpa_text: `ကုမ္ပဏီသည် အချက်အလက်များကို လုံခြုံရေးအတွက်သာ သိမ်းမည်`,
+    consent: "PDPA လက်ခံ",
+    card_subtitle: "အခြေအနေ 3.2.2",
     name_label: "အမည်",
     code_label: "နံပါတ်",
     dept_label: "ဌာန",
     company_label: "ကုမ္ပဏီ",
-    qr_title: "စစ်ဆေးရန် QR Code",
-    qr_hint: "လုံခြုံရေးဝန်ထမ်းထံ ပြပါ<br><strong>အချက်အလက်ပြည့်စုံသည်</strong>",
-    status_title: "✅ ကတ်အသုံးပြုရန်အဆင်သင့်",
-    status_text: "ပရင့်လုပ် သို့မဟုတ် မျက်နှာပြင်သိမ်းပါ",
-    new_card: "ကတ်အသစ်ဖန်တီး"
+    qr_title: "QR Code",
+    qr_hint: "လုံခြုံရေးထံပြပါ",
+    status_title: "✅ အသုံးပြုရန်အဆင်သင့်",
+    status_text: "မျက်နှာပြင်သိမ်း",
+    new_card: "ကတ်အသစ်",
+    screenshot: "မျက်နှာပြင်သိမ်း"
   },
   km: {
-    title: "ស្នើសុំចាប់អារម្មណ៍ចេញក្រៅតំបន់",
-    subtitle: "ករណី 3.2.2 - បុគ្គលិករស់នៅខាងក្រៅ",
-    name: "ឈ្មោះ-នាម",
-    code: "កូដបុគ្គលិក",
+    title: "ស្នើចេញក្រៅ",
+    subtitle: "ករណី 3.2.2",
+    name: "ឈ្មោះ",
+    code: "កូដ",
     company: "ក្រុមហ៊ុន",
     dept: "នាយកដ្ឋាន",
     photo: "រូបថត",
-    generate: "បង្កើតកាត",
-    pdpa_title: "PDPA - គោលនយោបាយឯកជនភាព",
-    pdpa_text: `ក្រុមហ៊ុនក្នុងនាមជាអ្នកគ្រប់គ្រងទិន្នន័យផ្ទាល់ខ្លួន នឹងប្រមូល ប្រើប្រាស់ និងដំណើរការទិន្នន័យផ្ទាល់ខ្លួនរបស់អ្នក រួមមាន ឈ្មោះ កូដបុគ្គលិក រូបថត<br>
-សម្រាប់គោលបំណងត្រួតពិនិត្យសិទ្ធិ គ្រប់គ្រងសុវត្ថិភាព និងគ្រប់គ្រងការចូល-ចេញតាមវិធានការក្រុមហ៊ុនតែប៉ុណ្ណោះ<br><br>
-ការចុចប៊ូតុង "បង្កើត QR Code" ត្រូវបានចាត់ទុកថាអ្នកបានអានយល់ដឹង និងយល់ព្រមតាមច្បាប់ការពារទិន្នន័យផ្ទាល់ខ្លួន ឆ្នាំ២០២២`,
-    consent: "ខ្ញុំយល់ព្រមនិងផ្តល់ការយល់ព្រមតាម PDPA",
-    card_subtitle: "ករណី 3.2.2 - បុគ្គលិករស់នៅខាងក្រៅ",
+    generate: "បង្កើត",
+    pdpa_title: "PDPA",
+    pdpa_text: `ក្រុមហ៊ុននឹងរក្សាទិន្នន័យសម្រាប់សុវត្ថិភាពតែប៉ុណ្ណោះ`,
+    consent: "PDPA យល់ព្រម",
+    card_subtitle: "ករណី 3.2.2",
     name_label: "ឈ្មោះ",
     code_label: "កូដ",
     dept_label: "នាយកដ្ឋាន",
     company_label: "ក្រុមហ៊ុន",
-    qr_title: "QR Code សម្រាប់ត្រួតពិនិត្យ",
-    qr_hint: "បង្ហាញដល់មន្ត្រីសុវត្ថិភាព<br><strong>ព័ត៌មានពេញលេញនិរន្តរភាព</strong>",
-    status_title: "✅ កាតត្រៀមរួចសម្រាប់ប្រើប្រាស់",
-    status_text: "បោះពុម្ពឬរក្សាទុកអេក្រង់",
-    new_card: "បង្កើតកាតថ្មី"
+    qr_title: "QR Code",
+    qr_hint: "បង្ហាញដល់សុវត្ថិភាព",
+    status_title: "✅ រួចរាល់",
+    status_text: "រក្សាទុកអេក្រង់",
+    new_card: "បង្កើតថ្មី",
+    screenshot: "រក្សាទុកអេក្រង់"
   }
 };
 
 const companies = [
-  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQO)",
+  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQR)",
   "บริษัท ไทยอีสเทิร์น อินโนเวชั่น จำกัด (TEI)",
   "บริษัท ไทยอีสเทิร์น รับเบอร์ จำกัด (TER)",
   "บริษัท อีสเทิร์น ปาล์ม ออยล์ จำกัด (EPO)",
   "บริษัท ไทยอีสเทิร์น ท้อปซีดส์ ออยล์ จำกัด (TETSO)",
   "บริษัท ไทยอีสเทิร์น ไบโอ พาวเวอร์ จำกัด (มหาชน) (TEBP)",
   "บริษัท ไทยอีสเทิร์น โลจิสติกส์ จำกัด (TEL)",
-  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)"
+  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)",
+  "บริษัท ไทยอีสเทิร์น ยูทิลิตี้ส์ จำกัด (TEU)",
+  "บริษัท ไทยอีสเทิร์น พรอพเพอร์ตี้ แมเนจเม้นท์ จำกัด (TEPM)",
+  "บริษัท ไทยอีสเทิร์น แพลนเทชั่น จำกัด (TEP)",
+  "บริษัท ทีอีจีเอ โฮลดิ้งส์ จำกัด (TEGAH)"
 ];
 
 let currentLang = 'th';
@@ -696,21 +661,13 @@ let employeeData = JSON.parse(localStorage.getItem('tegEmployeeData')) || [];
 let isGuardMode = false;
 let video, canvas, ctx;
 let currentScannedKey = null;
-let isProcessing = false; // 🔥 ป้องกันการกดซ้ำ
+let isProcessing = false;
 
-// 🔥 ฟังก์ชันหลักเริ่มต้น
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🔥 TEG Guard 3.2.2 Loaded');
+  console.log('🔥 TEG 3.2.2 Loaded');
   setupLanguageSwitcher();
   setupGuardMode();
   showForm(document.getElementById('main-container'));
-  
-  // ตรวจสอบ URL parameter สำหรับ QR scan อัตโนมัติ
-  const urlParams = new URLSearchParams(window.location.search);
-  const key = urlParams.get('key');
-  if (key && isGuardMode) {
-    showEmployeeByKey(key);
-  }
 });
 
 function setupLanguageSwitcher() {
@@ -718,7 +675,7 @@ function setupLanguageSwitcher() {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
       currentLang = this.dataset.lang;
-      document.querySelector('.lang-btn.active').classList.remove('active');
+      document.querySelector('.lang-btn.active')?.classList.remove('active');
       this.classList.add('active');
       if (!isGuardMode) {
         showForm(document.getElementById('main-container'));
@@ -733,18 +690,18 @@ function setupGuardMode() {
   const cancelBtn = document.getElementById('cancelLogin');
   const loginBtn = document.getElementById('confirmLogin');
   
-  guardBtn.addEventListener('click', (e) => {
+  guardBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     modal.style.display = 'flex';
   });
   
-  cancelBtn.addEventListener('click', (e) => {
+  cancelBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     modal.style.display = 'none';
     document.getElementById('guardPassword').value = '';
   });
   
-  loginBtn.addEventListener('click', (e) => {
+  loginBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     const password = document.getElementById('guardPassword').value;
     if (password === 'Teg2025+') {
@@ -761,23 +718,21 @@ function setupGuardMode() {
     }
   });
   
-  // Tab buttons
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
-      document.querySelector('.tab-btn.active').classList.remove('active');
+      document.querySelector('.tab-btn.active')?.classList.remove('active');
       this.classList.add('active');
       document.querySelectorAll('.scan-section, .report-section').forEach(sec => sec.classList.remove('active'));
-      document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+      document.getElementById(this.dataset.tab + 'Tab')?.classList.add('active');
       if (this.dataset.tab === 'scan') initQRScanner();
       if (this.dataset.tab === 'report') loadReport();
     });
   });
   
-  document.getElementById('exportExcel').addEventListener('click', exportToExcel);
-  document.getElementById('qrImageInput').addEventListener('change', handleQrImageUpload);
+  document.getElementById('exportExcel')?.addEventListener('click', exportToExcel);
+  document.getElementById('qrImageInput')?.addEventListener('change', handleQrImageUpload);
   
-  // Guard confirm button (dynamic)
   document.addEventListener('click', function(e) {
     if (e.target.id === 'guardConfirmBtn') {
       guardConfirmAction();
@@ -789,15 +744,15 @@ function showForm(container) {
   const t = translations[currentLang];
   container.innerHTML = `
     <h1>${t.title}</h1>
-    <p style="text-align:center;color:#6b7280;font-size:0.95rem;margin-bottom:24px;">${t.subtitle}</p>
+    <p style="text-align:center;color:#6b7280;font-size:0.85rem;margin-bottom:16px;">${t.subtitle}</p>
     <form id="employeeForm" class="form-section">
       <div class="form-group">
         <label>${t.name} <span style="color:#ef4444;">*</span></label>
-        <input type="text" id="name1" required placeholder="กรุณากรอกชื่อ-นามสกุล">
+        <input type="text" id="name1" required placeholder="${t.name}">
       </div>
       <div class="form-group">
         <label>${t.code} <span style="color:#ef4444;">*</span></label>
-        <input type="text" id="code1" required placeholder="กรุณากรอกรหัสพนักงาน">
+        <input type="text" id="code1" required placeholder="${t.code}">
       </div>
       <div class="form-group">
         <label>${t.company} <span style="color:#ef4444;">*</span></label>
@@ -808,7 +763,7 @@ function showForm(container) {
       </div>
       <div class="form-group">
         <label>${t.dept} <span style="color:#ef4444;">*</span></label>
-        <input type="text" id="dept1" required placeholder="กรุณากรอกแผนก">
+        <input type="text" id="dept1" required placeholder="${t.dept}">
       </div>
       <div class="pdpa-notice">
         <h4>${t.pdpa_title}</h4>
@@ -851,34 +806,27 @@ function setupFormEvents() {
         generateBtn.disabled = !isReady;
         generateBtn.textContent = isReady ? '✅ สร้างบัตรพนักงาน' : '📱 สร้างบัตรพนักงาน';
       }
-      
-      console.log('Form check:', {name: !!name, code: !!code, company: !!company, dept: !!dept, pdpa, photo});
     } catch(e) {
-      console.error('Form check error:', e);
+      console.error('Form check:', e);
     }
   }
   
-  // 🔥 แก้ไข: Photo preview - เพิ่ม timeout และ error handling
   if (photoInput) {
     photoInput.addEventListener('change', function(e) {
-      console.log('📸 Photo input change triggered');
+      console.log('📸 Photo selected');
       const file = e.target.files[0];
       if (file) {
-        if (file.size > 3 * 1024 * 1024) { // ลดเหลือ 3MB
-          alert('⚠️ รูปใหญ่เกินไป (สูงสุด 3MB)');
+        if (file.size > 3 * 1024 * 1024) {
+          alert('⚠️ รูปใหญ่เกิน 3MB');
           photoInput.value = '';
           checkFormReady();
           return;
         }
         
         const reader = new FileReader();
-        let timeoutId;
-        
-        // 🔥 เพิ่ม timeout 10 วินาที
-        timeoutId = setTimeout(() => {
-          console.error('⏰ FileReader timeout');
+        const timeoutId = setTimeout(() => {
           reader.abort();
-          alert('❌ อ่านรูปล้มเหลว กรุณาเลือกรูปใหม่');
+          alert('❌ อ่านรูปล้มเหลว');
           photoInput.value = '';
           preview.style.display = 'none';
           checkFormReady();
@@ -888,14 +836,13 @@ function setupFormEvents() {
           clearTimeout(timeoutId);
           preview.src = e2.target.result;
           preview.style.display = 'block';
-          console.log('✅ Photo loaded successfully');
+          console.log('✅ Photo OK');
           checkFormReady();
         };
         
         reader.onerror = function() {
           clearTimeout(timeoutId);
-          console.error('❌ FileReader error');
-          alert('❌ ไม่สามารถอ่านรูปได้');
+          alert('❌ ไม่สามารถอ่านรูป');
           photoInput.value = '';
           preview.style.display = 'none';
           checkFormReady();
@@ -909,31 +856,16 @@ function setupFormEvents() {
     });
   }
   
-  // Input events
   ['name1', 'code1', 'dept1'].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.addEventListener('input', checkFormReady);
-      input.addEventListener('change', checkFormReady);
-    }
+    document.getElementById(id)?.addEventListener('input', checkFormReady);
   });
   
-  const companySelect = document.getElementById('company1');
-  if (companySelect) {
-    companySelect.addEventListener('change', checkFormReady);
-  }
+  document.getElementById('company1')?.addEventListener('change', checkFormReady);
+  document.getElementById('pdpa-consent')?.addEventListener('change', checkFormReady);
   
-  const pdpaCheckbox = document.getElementById('pdpa-consent');
-  if (pdpaCheckbox) {
-    pdpaCheckbox.addEventListener('change', checkFormReady);
-  }
-  
-  // 🔥 แก้ไข: ปุ่ม - เพิ่มการป้องกันการกดซ้ำ
   if (generateBtn) {
     generateBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      e.stopPropagation();
-      console.log('🔘 Generate button clicked, isProcessing:', isProcessing);
       if (!this.disabled && !isProcessing) {
         createProfessionalCard();
       }
@@ -945,14 +877,13 @@ function setupFormEvents() {
 
 function createProfessionalCard() {
   if (isProcessing) {
-    console.log('⚠️ Already processing, ignoring click');
+    console.log('⚠️ Processing...');
     return;
   }
   
-  isProcessing = true; // 🔥 ล็อคการทำงาน
+  isProcessing = true;
   
   try {
-    console.log('🔥 Creating professional card...');
     const name = document.getElementById('name1')?.value.trim();
     const code = document.getElementById('code1')?.value.trim();
     const company = document.getElementById('company1')?.value;
@@ -961,7 +892,7 @@ function createProfessionalCard() {
     const t = translations[currentLang];
     
     if (!file) {
-      alert('❌ กรุณาเลือกรูปถ่าย');
+      alert('❌ กรุณาเลือกรูป');
       isProcessing = false;
       return;
     }
@@ -973,13 +904,9 @@ function createProfessionalCard() {
     }
     
     const reader = new FileReader();
-    let timeoutId;
-    
-    // 🔥 เพิ่ม timeout 15 วินาที
-    timeoutId = setTimeout(() => {
-      console.error('⏰ Create card timeout');
+    const timeoutId = setTimeout(() => {
       reader.abort();
-      alert('❌ สร้างบัตรล้มเหลว กรุณาลองใหม่');
+      alert('❌ สร้างบัตรล้มเหลว');
       if (generateBtn) {
         generateBtn.disabled = false;
         generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
@@ -989,7 +916,6 @@ function createProfessionalCard() {
     
     reader.onload = function(e) {
       clearTimeout(timeoutId);
-      console.log('✅ Photo data loaded');
       const photoData = e.target.result;
       const key = 'EMP_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       const employee = {
@@ -1002,9 +928,9 @@ function createProfessionalCard() {
       employeeData.unshift(employee);
       try {
         localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
-      } catch(storageError) {
-        console.error('❌ LocalStorage full:', storageError);
-        alert('⚠️ พื้นที่เก็บข้อมูลเต็ม กรุณาลบบัตรเก่า');
+      } catch(err) {
+        console.error('Storage full:', err);
+        alert('⚠️ พื้นที่เต็ม กรุณาลบข้อมูลเก่า');
       }
       
       console.log('✅ Card created:', key);
@@ -1014,8 +940,7 @@ function createProfessionalCard() {
     
     reader.onerror = function() {
       clearTimeout(timeoutId);
-      console.error('❌ FileReader error');
-      alert('❌ ไม่สามารถอ่านรูปได้');
+      alert('❌ ไม่สามารถอ่านรูป');
       if (generateBtn) {
         generateBtn.disabled = false;
         generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
@@ -1025,13 +950,8 @@ function createProfessionalCard() {
     
     reader.readAsDataURL(file);
   } catch(e) {
-    console.error('Create card error:', e);
-    alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
-    const generateBtn = document.getElementById('generateBtn');
-    if (generateBtn) {
-      generateBtn.disabled = false;
-      generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
-    }
+    console.error('Error:', e);
+    alert('❌ เกิดข้อผิดพลาด');
     isProcessing = false;
   }
 }
@@ -1039,14 +959,14 @@ function createProfessionalCard() {
 function showEmployeeCard(name, code, company, dept, photoData, key, t) {
   const container = document.getElementById('main-container');
   container.innerHTML = `
-    <div class="card-section">
+    <div class="card-section" id="card-capture">
       <div class="employee-card">
         <div class="card-header">
           <h3 class="card-company">${company}</h3>
           <p class="card-subtitle">${t.card_subtitle}</p>
         </div>
         <div class="card-body">
-          <img src="${photoData}" class="card-photo" alt="รูปพนักงาน" loading="lazy">
+          <img src="${photoData}" class="card-photo" alt="photo">
           <div class="card-details">
             <div class="detail-row">
               <span class="detail-label">${t.name_label}</span>
@@ -1076,57 +996,83 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
         <h3>${t.status_title}</h3>
         <p>${t.status_text}</p>
       </div>
-      <button class="main-button" onclick="location.reload()" style="background:#6b7280;color:white;">
-        🔄 ${t.new_card}
-      </button>
     </div>
+    <button class="main-button screenshot-btn" id="screenshotBtn">
+      📸 ${t.screenshot}
+    </button>
+    <button class="main-button" onclick="location.reload()" style="background:#6b7280;color:white;margin-top:10px;">
+      🔄 ${t.new_card}
+    </button>
   `;
   
-  // สร้าง QR Code
   setTimeout(() => {
     try {
-      const canvas = document.getElementById('qr-canvas');
-      if (canvas) {
+      const qrCanvas = document.getElementById('qr-canvas');
+      if (qrCanvas) {
         const qrUrl = `${window.location.origin}${window.location.pathname}?key=${key}`;
-        new QRious({ 
-          element: canvas, 
-          value: qrUrl, 
-          size: 240, 
-          level: 'H' 
-        });
-        console.log('✅ QR Generated:', qrUrl);
+        new QRious({ element: qrCanvas, value: qrUrl, size: 200, level: 'H' });
+        console.log('✅ QR OK');
       }
     } catch(e) {
       console.error('QR Error:', e);
     }
   }, 200);
+  
+  // 🔥 Screenshot function
+  document.getElementById('screenshotBtn')?.addEventListener('click', async function() {
+    try {
+      this.disabled = true;
+      this.textContent = '⏳ กำลังบันทึก...';
+      
+      const captureElement = document.getElementById('card-capture');
+      const canvas = await html2canvas(captureElement, {
+        backgroundColor: null,
+        scale: 2,
+        logging: false
+      });
+      
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `TEG_Card_${code}_${Date.now()}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        this.disabled = false;
+        this.textContent = '✅ บันทึกสำเร็จ';
+        setTimeout(() => {
+          this.textContent = `📸 ${t.screenshot}`;
+        }, 2000);
+      });
+    } catch(e) {
+      console.error('Screenshot error:', e);
+      alert('❌ บันทึกหน้าจอล้มเหลว');
+      this.disabled = false;
+      this.textContent = `📸 ${t.screenshot}`;
+    }
+  });
 }
 
-/* ====== รปภ. Scanner ====== */
 function initQRScanner() {
-  if (video && video.srcObject) return;
+  if (video?.srcObject) return;
   
   video = document.getElementById('video');
   canvas = document.getElementById('canvas');
-  ctx = canvas.getContext('2d');
+  ctx = canvas?.getContext('2d');
   
   navigator.mediaDevices.getUserMedia({ 
-    video: { 
-      facingMode: 'environment',
-      width: { ideal: 1280 },
-      height: { ideal: 720 }
-    } 
+    video: { facingMode: 'environment', width: 1280, height: 720 } 
   })
   .then(stream => {
     video.srcObject = stream;
-    video.setAttribute('playsinline', true);
     video.play();
     requestAnimationFrame(tick);
   })
   .catch(err => {
-    console.error('Camera error:', err);
+    console.error('Camera:', err);
     document.getElementById('scanTab').innerHTML += 
-      '<p style="color:red;text-align:center;padding:20px;">📱 ไม่สามารถเปิดกล้องได้<br>กรุณาให้สิทธิ์การใช้งานกล้อง</p>';
+      '<p style="color:red;text-align:center;padding:16px;">📱 ไม่สามารถเปิดกล้อง</p>';
   });
 }
 
@@ -1143,11 +1089,11 @@ function tick() {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const code = jsQR(imageData.data, imageData.width, imageData.height);
   
-  if (code && code.data.includes('?key=')) {
+  if (code?.data.includes('?key=')) {
     const url = new URL(code.data);
     const key = url.searchParams.get('key');
     if (key) {
-      console.log('🔍 QR Scanned:', key);
+      console.log('🔍 QR:', key);
       showEmployeeByKey(key);
       return;
     }
@@ -1166,20 +1112,20 @@ function handleQrImageUpload(e) {
     img.onload = function() {
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height);
       
-      if (code && code.data.includes('?key=')) {
+      if (code?.data.includes('?key=')) {
         const url = new URL(code.data);
         const key = url.searchParams.get('key');
         if (key) {
           showEmployeeByKey(key);
         } else {
-          alert('❌ ไม่พบ key ใน QR นี้');
+          alert('❌ ไม่พบ key');
         }
       } else {
-        alert('❌ อ่าน QR จากรูปไม่สำเร็จ');
+        alert('❌ อ่าน QR ล้มเหลว');
       }
     };
     img.src = ev.target.result;
@@ -1190,7 +1136,7 @@ function handleQrImageUpload(e) {
 function showEmployeeByKey(key) {
   const emp = employeeData.find(e => e.key === key);
   if (!emp) { 
-    alert('❌ ไม่พบข้อมูลพนักงานในระบบ');
+    alert('❌ ไม่พบข้อมูล');
     return; 
   }
   
@@ -1219,13 +1165,13 @@ function showEmployeeByKey(key) {
 
 function guardConfirmAction() {
   if (!currentScannedKey) { 
-    alert('❌ ยังไม่มีข้อมูลจาก QR');
+    alert('❌ ยังไม่มีข้อมูล');
     return; 
   }
   
   const index = employeeData.findIndex(e => e.key === currentScannedKey);
   if (index === -1) { 
-    alert('❌ ไม่พบข้อมูลพนักงาน');
+    alert('❌ ไม่พบข้อมูล');
     return; 
   }
   
@@ -1243,7 +1189,7 @@ function guardConfirmAction() {
   localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
   document.getElementById('scan-guard-time').textContent = new Date(now).toLocaleString('th-TH');
   
-  alert('✅ บันทึกเวลายืนยันเรียบร้อย!\n📊 อัพเดทรายงานแล้ว');
+  alert('✅ บันทึกสำเร็จ');
   loadReport();
   document.getElementById('scan-result').style.display = 'none';
   currentScannedKey = null;
@@ -1254,41 +1200,40 @@ function loadReport() {
   if (!tbody) return;
   
   tbody.innerHTML = '';
-  employeeData.slice(0, 50).forEach(emp => {
+  employeeData.slice(0, 100).forEach(emp => {
+    const totalScans = emp.scanLogs?.length || 0;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="photo-cell"><img src="${emp.photoData}" alt="" loading="lazy"></td>
+      <td class="photo-cell"><img src="${emp.photoData}" alt=""></td>
       <td>${emp.name}</td>
       <td>${emp.code}</td>
-      <td>${emp.company.substring(0,20)}${emp.company.length > 20 ? '...' : ''}</td>
-      <td>${emp.dept.substring(0,15)}${emp.dept.length > 15 ? '...' : ''}</td>
+      <td>${emp.company.substring(0,18)}...</td>
+      <td>${emp.dept.substring(0,12)}...</td>
       <td>${new Date(emp.timestamp).toLocaleString('th-TH')}</td>
       <td>${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}</td>
+      <td><strong>${totalScans}</strong></td>
     `;
     tbody.appendChild(tr);
   });
 }
 
 function exportToExcel() {
-  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,สร้างบัตร,รปภ.ยืนยัน,สแกนทั้งหมด\n';
+  let csv = '\uFEFFชื่อ,รหัส,บริษัท,แผนก,สร้างบัตร,รปภ.ยืนยัน,จำนวนสแกน,รายละเอียดสแกน\n';
   employeeData.forEach(emp => {
     const totalScans = emp.scanLogs?.length || 0;
-    const scanDetails = emp.scanLogs?.slice(0,5).map(log => 
-      `${log.scanTimeLocal}${log.guardConfirmed ? ' (ยืนยัน)' : ''}`
-    ).join('; ') || '';
-    csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : ''}","${totalScans} (${scanDetails})"\n`;
+    const scanDetails = emp.scanLogs?.slice(0,10).map(log => 
+      `${log.scanTimeLocal}${log.guardConfirmed ? ' (✅)' : ''}`
+    ).join(' | ') || '';
+    csv += `"${emp.name}","${emp.code}","${emp.company}","${emp.dept}","${new Date(emp.timestamp).toLocaleString('th-TH')}","${emp.guardConfirmTime ? new Date(emp.guardConfirmTime).toLocaleString('th-TH') : '-'}","${totalScans}","${scanDetails}"\n`;
   });
   
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `TEG_322_Report_${new Date().toISOString().split('T')[0]}.csv`;
-  document.body.appendChild(link);
+  link.download = `TEG_Report_${new Date().toISOString().split('T')[0]}.csv`;
   link.click();
-  document.body.removeChild(link);
 }
 
-// PWA Support
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
