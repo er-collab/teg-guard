@@ -696,6 +696,7 @@ let employeeData = JSON.parse(localStorage.getItem('tegEmployeeData')) || [];
 let isGuardMode = false;
 let video, canvas, ctx;
 let currentScannedKey = null;
+let isProcessing = false; // 🔥 ป้องกันการกดซ้ำ
 
 // 🔥 ฟังก์ชันหลักเริ่มต้น
 document.addEventListener('DOMContentLoaded', function() {
@@ -828,28 +829,28 @@ function showForm(container) {
     </form>
   `;
   
-  // 🔥 แก้ปัญหา Mobile - Setup events ใหม่ทุกครั้ง
   setupFormEvents();
 }
 
 function setupFormEvents() {
   const photoInput = document.getElementById('photo1');
   const preview = document.getElementById('preview1');
-  const form = document.getElementById('employeeForm');
   const generateBtn = document.getElementById('generateBtn');
   
   function checkFormReady() {
     try {
-      const name = document.getElementById('name1').value.trim();
-      const code = document.getElementById('code1').value.trim();
-      const company = document.getElementById('company1').value;
-      const dept = document.getElementById('dept1').value.trim();
-      const pdpa = document.getElementById('pdpa-consent').checked;
-      const photo = photoInput.files && photoInput.files.length > 0;
+      const name = document.getElementById('name1')?.value.trim();
+      const code = document.getElementById('code1')?.value.trim();
+      const company = document.getElementById('company1')?.value;
+      const dept = document.getElementById('dept1')?.value.trim();
+      const pdpa = document.getElementById('pdpa-consent')?.checked;
+      const photo = photoInput?.files && photoInput.files.length > 0;
       
       const isReady = name && code && company && dept && pdpa && photo;
-      generateBtn.disabled = !isReady;
-      generateBtn.textContent = isReady ? '✅ สร้างบัตรพนักงาน' : '📱 สร้างบัตรพนักงาน';
+      if (generateBtn) {
+        generateBtn.disabled = !isReady;
+        generateBtn.textContent = isReady ? '✅ สร้างบัตรพนักงาน' : '📱 สร้างบัตรพนักงาน';
+      }
       
       console.log('Form check:', {name: !!name, code: !!code, company: !!company, dept: !!dept, pdpa, photo});
     } catch(e) {
@@ -857,44 +858,56 @@ function setupFormEvents() {
     }
   }
   
-  // 🔥 แก้ไข: Photo preview - ลบ capture attribute และเพิ่ม error handling
-  photoInput.addEventListener('change', function(e) {
-    console.log('Photo input change triggered');
-    const file = e.target.files[0];
-    if (file) {
-      // ตรวจสอบขนาดไฟล์ (สูงสุด 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('⚠️ รูปใหญ่เกินไป (สูงสุด 5MB)');
-        photoInput.value = '';
+  // 🔥 แก้ไข: Photo preview - เพิ่ม timeout และ error handling
+  if (photoInput) {
+    photoInput.addEventListener('change', function(e) {
+      console.log('📸 Photo input change triggered');
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 3 * 1024 * 1024) { // ลดเหลือ 3MB
+          alert('⚠️ รูปใหญ่เกินไป (สูงสุด 3MB)');
+          photoInput.value = '';
+          checkFormReady();
+          return;
+        }
+        
+        const reader = new FileReader();
+        let timeoutId;
+        
+        // 🔥 เพิ่ม timeout 10 วินาที
+        timeoutId = setTimeout(() => {
+          console.error('⏰ FileReader timeout');
+          reader.abort();
+          alert('❌ อ่านรูปล้มเหลว กรุณาเลือกรูปใหม่');
+          photoInput.value = '';
+          preview.style.display = 'none';
+          checkFormReady();
+        }, 10000);
+        
+        reader.onload = function(e2) {
+          clearTimeout(timeoutId);
+          preview.src = e2.target.result;
+          preview.style.display = 'block';
+          console.log('✅ Photo loaded successfully');
+          checkFormReady();
+        };
+        
+        reader.onerror = function() {
+          clearTimeout(timeoutId);
+          console.error('❌ FileReader error');
+          alert('❌ ไม่สามารถอ่านรูปได้');
+          photoInput.value = '';
+          preview.style.display = 'none';
+          checkFormReady();
+        };
+        
+        reader.readAsDataURL(file);
+      } else {
+        preview.style.display = 'none';
         checkFormReady();
-        return;
       }
-      
-      const reader = new FileReader();
-      reader.onload = function(e2) {
-        preview.src = e2.target.result;
-        preview.style.display = 'block';
-        console.log('Photo loaded successfully');
-        checkFormReady();
-      };
-      reader.onerror = function() {
-        alert('❌ ไม่สามารถอ่านรูปได้');
-        photoInput.value = '';
-        checkFormReady();
-      };
-      reader.readAsDataURL(file);
-    } else {
-      preview.style.display = 'none';
-      checkFormReady();
-    }
-  });
-  
-  // 🔥 เพิ่ม: Mobile-specific event listener
-  photoInput.addEventListener('click', function(e) {
-    console.log('Photo input clicked');
-    // รีเซ็ต value เพื่อให้สามารถเลือกไฟล์เดิมซ้ำได้
-    this.value = '';
-  });
+    });
+  }
   
   // Input events
   ['name1', 'code1', 'dept1'].forEach(id => {
@@ -915,50 +928,67 @@ function setupFormEvents() {
     pdpaCheckbox.addEventListener('change', checkFormReady);
   }
   
-  // 🔥 แก้ไข: ปุ่ม Submit - ใช้ touchstart และ click
-  generateBtn.addEventListener('touchstart', function(e) {
-    console.log('Generate button touchstart');
-    if (!this.disabled) {
+  // 🔥 แก้ไข: ปุ่ม - เพิ่มการป้องกันการกดซ้ำ
+  if (generateBtn) {
+    generateBtn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      createProfessionalCard();
-    }
-  }, { passive: false });
+      console.log('🔘 Generate button clicked, isProcessing:', isProcessing);
+      if (!this.disabled && !isProcessing) {
+        createProfessionalCard();
+      }
+    });
+  }
   
-  generateBtn.addEventListener('click', function(e) {
-    console.log('Generate button click');
-    if (!this.disabled) {
-      e.preventDefault();
-      e.stopPropagation();
-      createProfessionalCard();
-    }
-  });
-  
-  // Initial check
   checkFormReady();
 }
 
 function createProfessionalCard() {
+  if (isProcessing) {
+    console.log('⚠️ Already processing, ignoring click');
+    return;
+  }
+  
+  isProcessing = true; // 🔥 ล็อคการทำงาน
+  
   try {
     console.log('🔥 Creating professional card...');
-    const name = document.getElementById('name1').value.trim();
-    const code = document.getElementById('code1').value.trim();
-    const company = document.getElementById('company1').value;
-    const dept = document.getElementById('dept1').value.trim();
-    const file = document.getElementById('photo1').files[0];
+    const name = document.getElementById('name1')?.value.trim();
+    const code = document.getElementById('code1')?.value.trim();
+    const company = document.getElementById('company1')?.value;
+    const dept = document.getElementById('dept1')?.value.trim();
+    const file = document.getElementById('photo1')?.files[0];
     const t = translations[currentLang];
     
     if (!file) {
       alert('❌ กรุณาเลือกรูปถ่าย');
+      isProcessing = false;
       return;
     }
     
     const generateBtn = document.getElementById('generateBtn');
-    generateBtn.disabled = true;
-    generateBtn.textContent = '⏳ กำลังสร้าง...';
+    if (generateBtn) {
+      generateBtn.disabled = true;
+      generateBtn.textContent = '⏳ กำลังสร้าง...';
+    }
     
     const reader = new FileReader();
+    let timeoutId;
+    
+    // 🔥 เพิ่ม timeout 15 วินาที
+    timeoutId = setTimeout(() => {
+      console.error('⏰ Create card timeout');
+      reader.abort();
+      alert('❌ สร้างบัตรล้มเหลว กรุณาลองใหม่');
+      if (generateBtn) {
+        generateBtn.disabled = false;
+        generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
+      }
+      isProcessing = false;
+    }, 15000);
+    
     reader.onload = function(e) {
+      clearTimeout(timeoutId);
       console.log('✅ Photo data loaded');
       const photoData = e.target.result;
       const key = 'EMP_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -970,17 +1000,29 @@ function createProfessionalCard() {
       };
       
       employeeData.unshift(employee);
-      localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
+      try {
+        localStorage.setItem('tegEmployeeData', JSON.stringify(employeeData));
+      } catch(storageError) {
+        console.error('❌ LocalStorage full:', storageError);
+        alert('⚠️ พื้นที่เก็บข้อมูลเต็ม กรุณาลบบัตรเก่า');
+      }
       
       console.log('✅ Card created:', key);
+      isProcessing = false;
       showEmployeeCard(name, code, company, dept, photoData, key, t);
     };
+    
     reader.onerror = function() {
+      clearTimeout(timeoutId);
       console.error('❌ FileReader error');
       alert('❌ ไม่สามารถอ่านรูปได้');
-      generateBtn.disabled = false;
-      generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
+      if (generateBtn) {
+        generateBtn.disabled = false;
+        generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
+      }
+      isProcessing = false;
     };
+    
     reader.readAsDataURL(file);
   } catch(e) {
     console.error('Create card error:', e);
@@ -990,6 +1032,7 @@ function createProfessionalCard() {
       generateBtn.disabled = false;
       generateBtn.textContent = '📱 สร้างบัตรพนักงาน';
     }
+    isProcessing = false;
   }
 }
 
@@ -1106,7 +1149,7 @@ function tick() {
     if (key) {
       console.log('🔍 QR Scanned:', key);
       showEmployeeByKey(key);
-      return; // หยุด scan ชั่วคราว
+      return;
     }
   }
   
@@ -1151,7 +1194,6 @@ function showEmployeeByKey(key) {
     return; 
   }
   
-  // บันทึก log การสแกน
   const scanLog = {
     scanTime: new Date().toISOString(),
     scanDate: new Date().toLocaleDateString('th-TH'),
@@ -1212,9 +1254,8 @@ function loadReport() {
   if (!tbody) return;
   
   tbody.innerHTML = '';
-  employeeData.slice(0, 50).forEach(emp => { // จำกัด 50 รายการล่าสุด
+  employeeData.slice(0, 50).forEach(emp => {
     const tr = document.createElement('tr');
-    const totalScans = emp.scanLogs?.length || 0;
     tr.innerHTML = `
       <td class="photo-cell"><img src="${emp.photoData}" alt="" loading="lazy"></td>
       <td>${emp.name}</td>
