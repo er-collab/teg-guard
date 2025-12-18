@@ -13,6 +13,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <!-- อ่าน QR จากกล้อง/รูป -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<!-- Screenshot Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
@@ -75,7 +77,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 24px;
-  padding: 28px 24px;
+  padding: 20px 16px;
   width: 100%;
   max-width: 420px;
   max-height: 95vh;
@@ -94,7 +96,11 @@ h1 {
   letter-spacing: 0.5px;
 }
 
-.form-section, .card-section { display: flex; flex-direction: column; gap: 20px; }
+.form-section, .card-section { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+}
 
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 label { font-weight: 500; color: #374151; font-size: 0.95rem; letter-spacing: 0.3px; }
@@ -212,101 +218,172 @@ input[type="file"]::file-selector-button:active {
 
 .card-header {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  padding: 24px 28px 20px;
+  padding: 20px 24px 16px;
   text-align: center;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 .card-company {
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #1e293b;
   margin: 0 0 4px 0;
 }
 .card-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #64748b;
   font-weight: 400;
   margin: 0;
 }
 
 .card-body {
-  padding: 28px;
+  padding: 16px;
   display: flex;
-  gap: 20px;
+  gap: 12px;
 }
 .card-photo {
-  width: 100px;
-  height: 130px;
-  border-radius: 14px;
+  width: 80px;
+  height: 100px;
+  border-radius: 10px;
   object-fit: cover;
   flex-shrink: 0;
-  border: 3px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 .card-details {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
-.detail-row { display: flex; align-items: flex-start; gap: 12px; }
+.detail-row { 
+  display: flex; 
+  align-items: flex-start; 
+  gap: 8px; 
+}
 .detail-label {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #374151;
-  min-width: 55px;
+  min-width: 50px;
   flex-shrink: 0;
 }
 .detail-value {
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #1f2937;
   flex: 1;
+  word-break: break-word;
 }
 
 .qr-container {
-  margin-top: 24px;
-  padding: 24px;
+  margin-top: 12px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 20px;
+  border-radius: 16px;
   border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 .qr-title {
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: #1f2937;
-  margin-bottom: 16px;
-  letter-spacing: 0.3px;
+  margin-bottom: 12px;
 }
 #qr-canvas {
-  width: 240px;
-  height: 240px;
-  border: 3px solid #f3f4f6;
-  border-radius: 16px;
+  width: 180px;
+  height: 180px;
+  border: 2px solid #f3f4f6;
+  border-radius: 12px;
   background: white;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
-  margin: 0 auto 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  margin: 0 auto 12px;
 }
-.qr-hint { font-size: 0.9rem; color: #6b7280; line-height: 1.5; }
+.qr-hint { 
+  font-size: 0.8rem; 
+  color: #6b7280; 
+  line-height: 1.4; 
+}
 
 .status-info {
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
   border: 1px solid #a7f3d0;
   border-radius: 12px;
-  padding: 16px;
-  margin-top: 20px;
+  padding: 12px;
+  margin-top: 12px;
   text-align: center;
 }
-.status-info h3 { color: #166534; font-size: 1.1rem; font-weight: 600; margin: 0 0 8px 0; }
-.status-info p { color: #047857; margin: 0; font-size: 0.95rem; }
+.status-info h3 { 
+  color: #166534; 
+  font-size: 1rem; 
+  font-weight: 600; 
+  margin: 0 0 6px 0; 
+}
+.status-info p { 
+  color: #047857; 
+  margin: 0; 
+  font-size: 0.85rem; 
+}
+
+/* ปุ่มใหม่ - แนวนอน 2 ปุ่ม */
+.card-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.card-buttons .main-button {
+  flex: 1;
+  padding: 12px;
+  font-size: 0.95rem;
+}
+
+.screenshot-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.reload-btn {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+}
 
 @media (max-width: 480px) {
-  .container { padding: 20px 16px; margin-top: 100px; }
-  .card-body { flex-direction: column; gap: 16px; }
-  .card-photo { width: 100%; height: 120px; align-self: center; }
-  #qr-canvas { width: 220px; height: 220px; }
+  .container { 
+    padding: 16px 12px; 
+    margin-top: 90px; 
+  }
+  
+  .card-body { 
+    padding: 12px;
+    flex-direction: row; 
+    gap: 10px; 
+  }
+  
+  .card-photo { 
+    width: 70px; 
+    height: 90px; 
+  }
+  
+  #qr-canvas { 
+    width: 160px; 
+    height: 160px; 
+  }
+  
+  .detail-label {
+    font-size: 0.8rem;
+    min-width: 45px;
+  }
+  
+  .detail-value {
+    font-size: 0.85rem;
+  }
+  
+  .card-company {
+    font-size: 0.95rem;
+  }
+  
+  .card-subtitle {
+    font-size: 0.75rem;
+  }
 }
 
 /* ===== ปุ่มเฟือง รปภ. มุมล่างขวา ===== */
@@ -651,7 +728,8 @@ const translations = {
     qr_hint: "แสดงต่อเจ้าหน้าที่รักษาความปลอดภัย<br><strong>ข้อมูลครบถ้วนถาวร</strong>",
     status_title: "✅ บัตรพร้อมใช้งาน",
     status_text: "พิมพ์หรือบันทึกหน้าจอเพื่อแสดงต่อ รปภ.",
-    new_card: "สร้างบัตรใหม่"
+    new_card: "สร้างบัตรใหม่",
+    save_screenshot: "บันทึกภาพ"
   },
   mm: {
     title: "စက်ရုံပြင်ပ ထွက်ခွင့်တောင်း",
@@ -676,7 +754,8 @@ const translations = {
     qr_hint: "လုံခြုံရေးဝန်ထမ်းထံ ပြပါ<br><strong>အချက်အလက်ပြည့်စုံသည်</strong>",
     status_title: "✅ ကတ်အသုံးပြုရန်အဆင်သင့်",
     status_text: "ပရင့်လုပ် သို့မဟုတ် မျက်နှာပြင်သိမ်းပါ",
-    new_card: "ကတ်အသစ်ဖန်တီး"
+    new_card: "ကတ်အသစ်ဖန်တီး",
+    save_screenshot: "ဓာပုံသိမ်း"
   },
   km: {
     title: "ស្នើសុំចាប់អារម្មណ៍ចេញក្រៅតំបន់",
@@ -701,27 +780,24 @@ const translations = {
     qr_hint: "បង្ហាញដល់មន្ត្រីសុវត្ថិភាព<br><strong>ព័ត៌មានពេញលេញនិរន្តរភាព</strong>",
     status_title: "✅ កាតត្រៀមរួចសម្រាប់ប្រើប្រាស់",
     status_text: "បោះពុម្ពឬរក្សាទុកអេក្រង់",
-    new_card: "បង្កើតកាតថ្មី"
+    new_card: "បង្កើតកាតថ្មី",
+    save_screenshot: "រក្សាទុករូបភាព"
   }
 };
 
 const companies = [
-  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQR)",
+  "บริษัท อี.คิว. รับเบอร์ จำกัด (EQO)",
   "บริษัท ไทยอีสเทิร์น อินโนเวชั่น จำกัด (TEI)",
   "บริษัท ไทยอีสเทิร์น รับเบอร์ จำกัด (TER)",
   "บริษัท อีสเทิร์น ปาล์ม ออยล์ จำกัด (EPO)",
   "บริษัท ไทยอีสเทิร์น ท้อปซีดส์ ออยล์ จำกัด (TETSO)",
   "บริษัท ไทยอีสเทิร์น ไบโอ พาวเวอร์ จำกัด (มหาชน) (TEBP)",
   "บริษัท ไทยอีสเทิร์น โลจิสติกส์ จำกัด (TEL)",
-  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)",
-  "บริษัท ไทยอีสเทิร์น ยูทิลิตี้ส์ จำกัด (TEU)",
-  "บริษัท ไทยอีสเทิร์น พรอพเพอร์ตี้ แมเนจเม้นท์ จำกัด (TEPM)",
-  "บริษัท ไทยอีสเทิร์น แพลนเทชั่น จำกัด (TEP)",
-  "บริษัท ทีอีจีเอ โฮลดิ้งส์ จำกัด (TEGAH)"
+  "บริษัท ไทยอีสเทิร์น อินดัสเตรียล แลนด์ จำกัด (TEIL)"
 ];
 
 let currentLang = 'th';
-let employeeData = []; // Local cache
+let employeeData = [];
 let isGuardMode = false;
 let video, canvas, ctx;
 let currentScannedKey = null;
@@ -980,7 +1056,6 @@ function createProfessionalCard() {
         scanLogs: []
       };
       
-      // บันทึกลง Firebase
       database.ref('employees/' + key).set(employee)
         .then(() => {
           console.log('✅ Saved to Firebase:', key);
@@ -1008,7 +1083,7 @@ function createProfessionalCard() {
 function showEmployeeCard(name, code, company, dept, photoData, key, t) {
   const container = document.getElementById('main-container');
   container.innerHTML = `
-    <div class="card-section">
+    <div class="card-section" id="card-section-capture">
       <div class="employee-card">
         <div class="card-header">
           <h3 class="card-company">${company}</h3>
@@ -1045,9 +1120,14 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
         <h3>${t.status_title}</h3>
         <p>${t.status_text}</p>
       </div>
-      <button class="main-button" onclick="location.reload()" style="background:#6b7280;color:white;">
-        🔄 ${t.new_card}
-      </button>
+      <div class="card-buttons">
+        <button class="main-button screenshot-btn" onclick="captureCard()">
+          📸 ${t.save_screenshot}
+        </button>
+        <button class="main-button reload-btn" onclick="location.reload()">
+          🔄 ${t.new_card}
+        </button>
+      </div>
     </div>
   `;
   
@@ -1059,7 +1139,7 @@ function showEmployeeCard(name, code, company, dept, photoData, key, t) {
         new QRious({ 
           element: canvas, 
           value: qrUrl, 
-          size: 240, 
+          size: 180, 
           level: 'H' 
         });
         console.log('✅ QR Generated:', qrUrl);
@@ -1171,11 +1251,10 @@ function showEmployeeByKey(key) {
     scanTimeLocal: new Date().toLocaleString('th-TH')
   };
   
-  // อัพเดท scanLogs ลง Firebase
   database.ref('employees/' + key + '/scanLogs').transaction((logs) => {
     if (!logs) logs = [];
     logs.unshift(scanLog);
-    return logs.slice(0, 50); // เก็บแค่ 50 log ล่าสุด
+    return logs.slice(0, 50);
   });
   
   document.getElementById('scan-photo').src = emp.photoData;
@@ -1204,11 +1283,6 @@ function guardConfirmAction() {
     scanTimeLocal: new Date().toLocaleString('th-TH'),
     guardConfirmed: true
   };
-  
-  // อัพเดท Firebase
-  const updates = {};
-  updates[`employees/${currentScannedKey}/guardConfirmTime`] = now;
-  updates[`employees/${currentScannedKey}/scanLogs`] = firebase.database.ServerValue.increment(0);
   
   database.ref('employees/' + currentScannedKey).transaction((emp) => {
     if (emp) {
@@ -1278,6 +1352,72 @@ function clearAllData() {
     .catch(err => {
       alert('❌ ลบไม่สำเร็จ: ' + err.message);
     });
+}
+
+// ========== Capture Screenshot ==========
+function captureCard() {
+  const container = document.getElementById('card-section-capture');
+  
+  if (!container) {
+    alert('❌ ไม่พบข้อมูลบัตร');
+    return;
+  }
+
+  try {
+    html2canvas(container, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      scrollY: -window.scrollY,
+      scrollX: -window.scrollX
+    }).then(canvas => {
+      // ลองใช้ share API ก่อน (สำหรับ mobile)
+      if (navigator.share && navigator.canShare) {
+        canvas.toBlob(blob => {
+          const file = new File([blob], 'TEG-Card.png', { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            navigator.share({
+              files: [file],
+              title: 'บัตรพนักงาน TEG',
+              text: 'บัตรพนักงานภายนอก TEG 3.2.2'
+            }).catch(err => {
+              console.log('Share cancelled:', err);
+              downloadCanvas(canvas);
+            });
+          } else {
+            downloadCanvas(canvas);
+          }
+        });
+      } else {
+        // Desktop: ดาวน์โหลดตรงๆ
+        downloadCanvas(canvas);
+      }
+    }).catch(err => {
+      console.error('Screenshot error:', err);
+      alert('⚠️ กรุณากด Screenshot จากอุปกรณ์ของคุณ\n(Power + Volume Down บน Android\nหรือ Power + Home บน iPhone)');
+    });
+  } catch(e) {
+    console.error('Capture error:', e);
+    alert('⚠️ ไม่สามารถจับภาพได้ กรุณาใช้ Screenshot จากอุปกรณ์');
+  }
+}
+
+function downloadCanvas(canvas) {
+  const link = document.createElement('a');
+  link.download = `TEG-Card-${Date.now()}.png`;
+  link.href = canvas.toDataURL('image/png');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // แสดงข้อความแจ้งเตือน
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#10b981;color:white;padding:20px 30px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+  msg.textContent = '✅ บันทึกภาพสำเร็จ!';
+  document.body.appendChild(msg);
+  setTimeout(() => document.body.removeChild(msg), 2000);
 }
 
 // PWA Support
